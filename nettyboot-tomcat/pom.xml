@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>nettyboot-framework</artifactId>
+        <groupId>com.nettyboot</groupId>
+        <version>1.0.1</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>nettyboot-tomcat</artifactId>
+    <packaging>jar</packaging>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.tomcat.embed</groupId>
+            <artifactId>tomcat-embed-core</artifactId>
+            <!--
+            <version>8.5.37</version>
+            <version>9.0.34</version>
+             -->
+            <version>9.0.34</version>
+        </dependency>
+        <dependency>
+            <groupId>com.nettyboot</groupId>
+            <artifactId>nettyboot-server</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.nettyboot</groupId>
+            <artifactId>nettyboot-config</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.nettyboot</groupId>
+            <artifactId>nettyboot-util</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.nettyboot</groupId>
+            <artifactId>nettyboot-logic</artifactId>
+        </dependency>
+    </dependencies>
+
+</project>
