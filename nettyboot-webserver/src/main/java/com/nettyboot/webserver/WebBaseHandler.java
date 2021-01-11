@@ -178,7 +178,7 @@ public abstract class WebBaseHandler extends SimpleChannelInboundHandler<HttpObj
 				JSONObject data = JSONObject.parseObject(bodyString);
 				requestInfo.addParameters(data);
 			}else if (type == PostBodyType.FORM){
-				QueryStringDecoder decoder = new QueryStringDecoder(bodyString);
+				QueryStringDecoder decoder = new QueryStringDecoder("?" + bodyString);
 				requestInfo.addParameters(decoder.parameters());
 			}
 		}
