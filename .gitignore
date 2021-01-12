@@ -1,0 +1,5 @@
+!/nettyboot-*/src
+/nettyboot-*/target/
+
+.idea
+*.iml
