@@ -9,7 +9,19 @@ import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.DecoderResult;
-import io.netty.handler.codec.http.*;
+import io.netty.handler.codec.http.DefaultFullHttpResponse;
+import io.netty.handler.codec.http.FullHttpResponse;
+import io.netty.handler.codec.http.HttpContent;
+import io.netty.handler.codec.http.HttpHeaderNames;
+import io.netty.handler.codec.http.HttpHeaders;
+import io.netty.handler.codec.http.HttpMethod;
+import io.netty.handler.codec.http.HttpObject;
+import io.netty.handler.codec.http.HttpRequest;
+import io.netty.handler.codec.http.HttpResponseStatus;
+import io.netty.handler.codec.http.HttpUtil;
+import io.netty.handler.codec.http.HttpVersion;
+import io.netty.handler.codec.http.LastHttpContent;
+import io.netty.handler.codec.http.QueryStringDecoder;
 import io.netty.util.CharsetUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +35,7 @@ public abstract class WebBaseHandler extends SimpleChannelInboundHandler<HttpObj
 
 	protected HttpMethod requestMethod = null;
 
+	private String requestContentType = null;
 	private StringBuffer postBody = null;
 
 	protected  String allowOrigin;
@@ -70,6 +83,10 @@ public abstract class WebBaseHandler extends SimpleChannelInboundHandler<HttpObj
                 sendError(ctx, HttpResponseStatus.METHOD_NOT_ALLOWED);
                 return;
             }
+			requestContentType = header.get(HttpHeaderNames.CONTENT_TYPE);
+        	if(requestContentType == null){
+				requestContentType = WebConfig.getResponseContentType();
+			}
 
         	QueryStringDecoder decoder = new QueryStringDecoder(request.uri());
         	String requestPath = decoder.path();
@@ -173,7 +190,7 @@ public abstract class WebBaseHandler extends SimpleChannelInboundHandler<HttpObj
     protected void parsePostBody(){
 		if(requestMethod == HttpMethod.POST && postBody != null){
 			String bodyString = postBody.toString();
-			PostBodyType type = WebConfig.getPostBodyType();
+			PostBodyType type = WebConfig.getPostBodyType(requestContentType);
 			if(type == PostBodyType.JSON){
 				JSONObject data = JSONObject.parseObject(bodyString);
 				requestInfo.addParameters(data);

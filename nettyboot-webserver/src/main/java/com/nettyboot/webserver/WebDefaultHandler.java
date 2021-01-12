@@ -68,6 +68,7 @@ public class WebDefaultHandler extends WebBaseHandler {
         return true;
     }
 
+    @Override
     protected void executeLogic(ChannelHandlerContext context){
         try {
             this.sendResult(context, LogicManager.executeLogic(requestInfo));
