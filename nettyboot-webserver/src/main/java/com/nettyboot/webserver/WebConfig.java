@@ -2,8 +2,8 @@ package com.nettyboot.webserver;
 
 import com.nettyboot.config.BaseConfig.PostBodyType;
 import com.nettyboot.config.RequestInfo;
-import io.netty.handler.codec.http.*;
-
+import io.netty.handler.codec.http.HttpHeaders;
+import io.netty.handler.codec.http.HttpMethod;
 import io.netty.util.CharsetUtil;
 
 import java.util.HashMap;
@@ -97,6 +97,16 @@ public final class WebConfig {
     protected static PostBodyType getPostBodyType(){
         if(responseContentType.contains("/json")){
             return PostBodyType.JSON;
+        }
+        return PostBodyType.FORM;
+    }
+
+    protected static PostBodyType getPostBodyType(String responseContentType){
+        if(responseContentType != null && !responseContentType.isEmpty()) {
+            responseContentType = responseContentType.toLowerCase();
+            if (responseContentType.contains("/json")) {
+                return PostBodyType.JSON;
+            }
         }
         return PostBodyType.FORM;
     }
