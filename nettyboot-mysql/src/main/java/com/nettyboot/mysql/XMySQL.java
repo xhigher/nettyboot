@@ -37,6 +37,7 @@ public class XMySQL {
 				dataSource.addDataSourceProperty("prepStmtCacheSize", properties.getProperty("mysql.dataSource" + i + ".prepStmtCacheSize"));
 				dataSource.addDataSourceProperty("prepStmtCacheSqlLimit", properties.getProperty("mysql.dataSource" + i + ".prepStmtCacheSqlLimit"));
 				dataSource.setMaximumPoolSize(Integer.valueOf(properties.getProperty("mysql.dataSource" + i + ".maximumPoolSize")));
+				dataSource.setConnectionInitSql(properties.getProperty("mysql.dataSource" + i + ".connectionInitSql", "SET NAMES utf8"));
 				
 				dataSourceMap.put(dataSource.getPoolName(), dataSource);
 				checkDataSource(dataSource);
