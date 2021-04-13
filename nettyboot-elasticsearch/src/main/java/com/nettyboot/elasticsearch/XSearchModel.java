@@ -164,4 +164,50 @@ public abstract class XSearchModel {
 		return null;
 	}
 
+	protected JSONObject searchPageList(BoolQueryBuilder boolBuilder, String[] resultFields, String orderName, SortOrder orderType, int pagenum, int pagesize, boolean onlyId) {
+		try {
+			int fromIndex = (pagenum >=1 ? pagenum-1 : pagenum) * pagesize;
+			SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
+			sourceBuilder.query(boolBuilder);
+			sourceBuilder.from(fromIndex);
+			sourceBuilder.size(pagesize);
+			if(orderName != null) {
+				sourceBuilder.sort(orderName, orderType==null?SortOrder.ASC:orderType);
+			}
+			sourceBuilder.fetchSource(resultFields, null);
+			SearchRequest searchRequest = new SearchRequest(this.getIndexName());
+			searchRequest.source(sourceBuilder);
+
+			logger.info("searchPageList: " + searchRequest.toString());
+			SearchResponse response = XElasticSearch.getClient().search(searchRequest, RequestOptions.DEFAULT);
+			long total = 0;
+			JSONArray resutlData = null;
+			if(response != null) {
+				logger.info("searchPageList: " + JSON.toJSONString(response));
+				resutlData = new JSONArray();
+				SearchHit[] searchHits = response.getHits().getHits();
+				if(searchHits.length > 0) {
+					for(int i=0; i<searchHits.length; i++) {
+						if(onlyId) {
+							resutlData.add(searchHits[i].getId());
+						}else {
+							resutlData.add(new JSONObject(searchHits[i].getSourceAsMap()));
+						}
+					}
+				}
+				total = response.getHits().getTotalHits().value;
+			}
+
+			JSONObject pageList = new JSONObject();
+			pageList.put("total", total);
+			pageList.put("pagenum", pagenum);
+			pageList.put("pagesize", pagesize);
+			pageList.put("data", resutlData == null ? new JSONArray(0) : resutlData);
+			return pageList;
+		}catch(Exception e) {
+			logger.error("search.Exception", e);
+		}
+		return null;
+	}
+
 }
