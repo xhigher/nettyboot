@@ -2,6 +2,7 @@ package com.nettyboot.logic;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.nettyboot.config.BaseDataKey;
 import com.nettyboot.config.ClientPeer;
 import com.nettyboot.config.ErrorCode;
 import com.nettyboot.config.LogicResultHelper;
@@ -75,7 +76,10 @@ public abstract class BaseLogic implements Cloneable {
 
 	public <T extends Enum<T>> T getEnumParameter(Class<T> enumType, String name) {
 		try {
-			return Enum.valueOf(enumType, getStringParameter(name));
+			String param = getStringParameter(name);
+			if(param != null) {
+				return Enum.valueOf(enumType, getStringParameter(name));
+			}
 		}catch(IllegalArgumentException e){}
 		return null;
 	}
@@ -192,6 +196,7 @@ public abstract class BaseLogic implements Cloneable {
 
 	private String handle(){
 		long start = System.currentTimeMillis();
+		String result = null;
 		try{
 			String prepareResult = this.prepare();
 			if(prepareResult != null){
@@ -207,11 +212,17 @@ public abstract class BaseLogic implements Cloneable {
 
 			this.beforeExecute();
 
-			return this.execute();
+			result = this.execute();
+			return result;
 		}catch(Exception e){
 			logger.error(this.getClass().getSimpleName(), e);
 			return errorInternalResult();
 		}finally{
+			if(result != null){
+				try {
+					this.beforeOutputResult(JSONObject.parseObject(result).getIntValue(BaseDataKey.errcode));
+				}catch (Exception e){}
+			}
 			logger.info("handle runtime: {}", (System.currentTimeMillis() - start));
 		}
 	}
