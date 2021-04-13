@@ -20,6 +20,14 @@ public abstract class LogicResultHelper {
 		return staticOutput(ErrorCode.NOK, null, null);
 	}
 
+	public static String error(String errorInfo){
+		return staticOutput(ErrorCode.NOK, errorInfo, null);
+	}
+
+	public static String error(int code, String errorInfo){
+		return staticOutput(code, errorInfo, null);
+	}
+
 	public static String errorInternal(){
 		return staticOutput(ErrorCode.INTERNAL_ERROR, "INTERNAL_ERROR", null);
 	}

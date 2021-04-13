@@ -6,6 +6,7 @@ public interface BaseDataKey {
 	String peerid = "peerid";
 	String sessionid = "sessionid";
 
+	String errcode = "errcode";
 	String data = "data";
 	String info = "info";
 	String msg = "msg";

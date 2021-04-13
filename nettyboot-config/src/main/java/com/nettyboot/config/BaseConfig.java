@@ -7,6 +7,7 @@ public interface BaseConfig {
 		int editing = 0;
 		int online  = 1;
 		int offline = 2;
+		int deleted = 3;
 	}
 
 	interface YesNo {
