@@ -29,12 +29,12 @@ public abstract class BaseStarter {
         Runtime.getRuntime().addShutdownHook(new Thread(){
             @Override
             public void run() {
+                server.stop();
                 try{
                     release();
                 }catch(Exception e){
                     logger.error("release.Exception:", e);
                 }
-                server.stop();
             }
         });
 
