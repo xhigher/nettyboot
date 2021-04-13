@@ -36,6 +36,7 @@ public class KafkaHelper {
         props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, properties.getProperty("kafka.producer.servers", ""));//kafka地址，多个地址用逗号分割
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+        props.put(ProducerConfig.LINGER_MS_CONFIG, Long.parseLong(properties.getProperty("kafka.producer.linger.ms", "1000")));
 
         producer = new KafkaProducer<String, String>(props);
     }
