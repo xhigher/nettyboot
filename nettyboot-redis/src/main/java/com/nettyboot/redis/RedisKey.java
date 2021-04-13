@@ -136,6 +136,35 @@ public class RedisKey {
             return XRedis.srem(this, members);
         }
 
+        public Long lpush(final String... members){
+            return XRedis.lpush(this, members);
+        }
+
+        public Long rpush(final String... members){
+            return XRedis.rpush(this, members);
+        }
+
+        public List<String> lrange(){
+            return XRedis.lrange(this);
+        }
+
+        public List<String> lrange(int start, int end){
+            return XRedis.lrange(this, start, end);
+        }
+
+        public Long lrem(String element){
+            return XRedis.lrem(this, element);
+        }
+
+        public String lpop(){
+            return XRedis.lpop(this);
+        }
+
+        public String rpop(){
+            return XRedis.rpop(this);
+        }
+
+
         public Long publish(String message) {
             return XRedis.publish(this, message);
         }

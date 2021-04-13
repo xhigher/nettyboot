@@ -778,6 +778,184 @@ public class XRedis {
 		return 0L;
 	}
 
+	public static Long lpush(RedisKey key, final String... elements) {
+		if (key != null) {
+			if(redisCluster != null){
+				return redisCluster.lpush(key.name(), elements);
+			}
+			Jedis jedis = null;
+			try {
+				jedis = getResource(key.builder.node);
+				if (jedis == null) {
+					logger.error("getResource.null: node=" + key.builder.node);
+					return null;
+				}
+				String keyName = key.name();
+				Long result = jedis.lpush(keyName, elements);
+				if(key.builder.expireTime > 0) {
+					jedis.expire(keyName, key.builder.expireTime);
+				}
+				return result;
+			} catch (Exception e) {
+				logger.error("sadd.Exception:", e);
+			} finally {
+				if (jedis != null) {
+					jedis.close();
+				}
+			}
+		}
+		return 0L;
+	}
+
+	public static Long rpush(RedisKey key, final String... elements) {
+		if (key != null) {
+			if(redisCluster != null){
+				return redisCluster.rpush(key.name(), elements);
+			}
+			Jedis jedis = null;
+			try {
+				jedis = getResource(key.builder.node);
+				if (jedis == null) {
+					logger.error("getResource.null: node=" + key.builder.node);
+					return null;
+				}
+				String keyName = key.name();
+				Long result = jedis.rpush(keyName, elements);
+				if(key.builder.expireTime > 0) {
+					jedis.expire(keyName, key.builder.expireTime);
+				}
+				return result;
+			} catch (Exception e) {
+				logger.error("sadd.Exception:", e);
+			} finally {
+				if (jedis != null) {
+					jedis.close();
+				}
+			}
+		}
+		return 0L;
+	}
+
+	public static List<String> lrange(final RedisKey key) {
+		if (key != null) {
+			if(redisCluster != null){
+				return redisCluster.lrange(key.name(), 0, -1);
+			}
+			Jedis jedis = null;
+			try {
+				jedis = getResource(key.builder.node);
+				if (jedis == null) {
+					logger.error("getResource.null: node=" + key.builder.node);
+					return null;
+				}
+				return jedis.lrange(key.name(), 0, -1);
+			} catch (Exception e) {
+				logger.error("smembers.Exception:", e);
+			} finally {
+				if (jedis != null) {
+					jedis.close();
+				}
+			}
+		}
+		return null;
+	}
+
+	public static List<String> lrange(final RedisKey key, int start, int stop) {
+		if (key != null) {
+			if(redisCluster != null){
+				return redisCluster.lrange(key.name(), start, stop);
+			}
+			Jedis jedis = null;
+			try {
+				jedis = getResource(key.builder.node);
+				if (jedis == null) {
+					logger.error("getResource.null: node=" + key.builder.node);
+					return null;
+				}
+				return jedis.lrange(key.name(), start, stop);
+			} catch (Exception e) {
+				logger.error("smembers.Exception:", e);
+			} finally {
+				if (jedis != null) {
+					jedis.close();
+				}
+			}
+		}
+		return null;
+	}
+
+	public static Long lrem(final RedisKey key, final String element) {
+		if (key != null) {
+			if(redisCluster != null){
+				return redisCluster.lrem(key.name(), 0, element);
+			}
+			Jedis jedis = null;
+			try {
+				jedis = getResource(key.builder.node);
+				if (jedis == null) {
+					logger.error("getResource.null: node=" + key.builder.node);
+					return null;
+				}
+				return jedis.lrem(key.name(), 0, element);
+			} catch (Exception e) {
+				logger.error("srem.Exception:", e);
+			} finally {
+				if (jedis != null) {
+					jedis.close();
+				}
+			}
+		}
+		return 0L;
+	}
+
+	public static String lpop(final RedisKey key) {
+		if (key != null) {
+			if(redisCluster != null){
+				return redisCluster.lpop(key.name());
+			}
+			Jedis jedis = null;
+			try {
+				jedis = getResource(key.builder.node);
+				if (jedis == null) {
+					logger.error("getResource.null: node=" + key.builder.node);
+					return null;
+				}
+				return jedis.lpop(key.name());
+			} catch (Exception e) {
+				logger.error("srem.Exception:", e);
+			} finally {
+				if (jedis != null) {
+					jedis.close();
+				}
+			}
+		}
+		return null;
+	}
+
+	public static String rpop(final RedisKey key) {
+		if (key != null) {
+			if(redisCluster != null){
+				return redisCluster.rpop(key.name());
+			}
+			Jedis jedis = null;
+			try {
+				jedis = getResource(key.builder.node);
+				if (jedis == null) {
+					logger.error("getResource.null: node=" + key.builder.node);
+					return null;
+				}
+				return jedis.rpop(key.name());
+			} catch (Exception e) {
+				logger.error("srem.Exception:", e);
+			} finally {
+				if (jedis != null) {
+					jedis.close();
+				}
+			}
+		}
+		return null;
+	}
+
 	public static Long publish(final RedisKey channel, String message) {
 		if (channel != null) {
 			if(redisCluster != null){
