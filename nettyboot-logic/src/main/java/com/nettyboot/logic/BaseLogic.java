@@ -212,17 +212,11 @@ public abstract class BaseLogic implements Cloneable {
 
 			this.beforeExecute();
 
-			result = this.execute();
-			return result;
+			return this.execute();
 		}catch(Exception e){
 			logger.error(this.getClass().getSimpleName(), e);
 			return errorInternalResult();
 		}finally{
-			if(result != null){
-				try {
-					this.beforeOutputResult(JSONObject.parseObject(result).getIntValue(BaseDataKey.errcode));
-				}catch (Exception e){}
-			}
 			logger.info("handle runtime: {}", (System.currentTimeMillis() - start));
 		}
 	}
