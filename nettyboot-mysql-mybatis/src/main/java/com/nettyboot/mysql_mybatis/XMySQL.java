@@ -1,6 +1,5 @@
-package com.nettyboot.mysql;
+package com.nettyboot.mysql_mybatis;
 
-import com.nettyboot.util.FileUtil;
 import com.zaxxer.hikari.HikariDataSource;
 import org.apache.ibatis.mapping.Environment;
 import org.apache.ibatis.session.Configuration;
@@ -12,14 +11,11 @@ import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class XMySQL {
 
@@ -58,6 +54,7 @@ public class XMySQL {
 				Environment environment = new Environment(envId, transactionFactory, dataSource);
 				Configuration configuration = new Configuration(environment);
 				configuration.addMappers(mapperPackage);
+
 				SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(configuration);
 
 				sqlSessionMap.put(dataSource.getPoolName(), sqlSessionFactory);

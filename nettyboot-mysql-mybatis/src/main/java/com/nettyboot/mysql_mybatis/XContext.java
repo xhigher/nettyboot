@@ -1,4 +1,4 @@
-package com.nettyboot.mysql;
+package com.nettyboot.mysql_mybatis;
 
 /*
  * @copyright (c) xhigher 2015 

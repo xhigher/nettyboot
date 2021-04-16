@@ -1,11 +1,8 @@
-package com.nettyboot.mysql;
+package com.nettyboot.mysql_mybatis;
 
 import org.apache.ibatis.session.SqlSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 
 /*
  * @copyright (c) xhigher 2015
