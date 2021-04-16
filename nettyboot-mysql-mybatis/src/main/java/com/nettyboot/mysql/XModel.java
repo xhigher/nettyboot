@@ -41,26 +41,14 @@ public abstract class XModel {
         return XMySQL.getSqlSession(getDataSourceName());
     }
 
-    public void closeSqlSession(ResultSet rs, PreparedStatement pstmt, SqlSession sqlSession) {
-        if (rs != null) {
-            try {
-                rs.close();
-            } catch (Exception e) {
-                logger.error("XModel.closeConnection.Exception", e);
-            }
-        }
-        if (pstmt != null) {
-            try {
-                pstmt.close();
-            } catch (Exception e) {
-                logger.error("XModel.closeConnection.Exception", e);
-            }
-        }
+    public void closeSqlSession(SqlSession sqlSession) {
 
         if (isBadTransaction()) {
             XMySQL.releaseSqlSession(sqlSession);
         }
     }
+
+
 
 }
 

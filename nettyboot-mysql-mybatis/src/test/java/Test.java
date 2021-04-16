@@ -4,7 +4,11 @@ import com.nettyboot.mysql.XMySQL;
 import com.nettyboot.util.FileUtil;
 import entrys.StudentInfoMapper;
 import model.xhs.SchoolDataDatabase;
+import model.xhs.StudentInfoModel;
 
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.Properties;
 
 /**
@@ -22,12 +26,20 @@ public class Test {
 
         XMySQL.init(properties);
 
-        SchoolDataDatabase schoolDataDatabase = new SchoolDataDatabase();
-//        schoolDataDatabase.setTransaction(new XContext());
+        StudentInfoModel studentInfoModel = new StudentInfoModel();
 
-        StudentInfoMapper studentInfoMapper = schoolDataDatabase.getStudentInfoMapper();
-        StudentInfo studentInfo = studentInfoMapper.selectById(1);
-        System.out.println(studentInfo.toString());
+        XContext context = new XContext();
+        context.startTransaction();
+
+        studentInfoModel.setTransaction(context);
+        StudentInfo studentInfo1 = studentInfoModel.selectById(1);
+        System.out.println(studentInfo1);
+
+        boolean b = studentInfoModel.updateById(1, "123456789");
+        System.out.println("---------" + b);
+
+        context.endTransaction(true);
+
 
     }
 }

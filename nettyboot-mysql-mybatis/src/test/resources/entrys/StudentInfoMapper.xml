@@ -5,4 +5,8 @@
     <select id="selectById" parameterType="int" resultType="beans.StudentInfo">
       SELECT * from student_info where student_id = #{id}
     </select>
+
+    <update id="updateById" parameterType="map" >
+      update student_info set memo=#{memo} where student_id = #{id}
+    </update>
 </mapper>
