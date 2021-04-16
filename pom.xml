@@ -30,6 +30,12 @@
         <nacos.version>1.3.2</nacos.version>
         <rabbitmq.version>5.8.0</rabbitmq.version>
         <kafka.version>2.5.0</kafka.version>
+        <seata.version>0.9.0</seata.version>
+        <slf4j.varsion>1.7.21</slf4j.varsion>
+        <logback.varsion>1.1.7</logback.varsion>
+        <log4j.varsion>2.13.2</log4j.varsion>
+        <lombok.varsion>1.18.8</lombok.varsion>
+        <mybatis.varsion>3.5.5</mybatis.varsion>
 
         <nb.config.version>1.0.1</nb.config.version>
         <nb.util.version>1.0.1</nb.util.version>
@@ -46,6 +52,7 @@
         <nb.gateway.version>1.0.1</nb.gateway.version>
         <nb.biznode.version>1.0.1</nb.biznode.version>
         <nb.mysql.version>1.0.1</nb.mysql.version>
+        <nb.mysql.mybatis.version>1.0.1</nb.mysql.mybatis.version>
         <nb.mongodb.version>1.0.1</nb.mongodb.version>
         <nb.redis.version>1.0.1</nb.redis.version>
         <nb.elasticsearch.version>1.0.1</nb.elasticsearch.version>
@@ -101,23 +108,30 @@
         <module>nettyboot-flink-server</module>
         <module>nettyboot-flink-kafka</module>
         <module>nettyboot-tomcat</module>
+        <module>nettyboot-mysql-mybatis</module>
     </modules>
 
     <dependencies>
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.1.7</version>
+            <version>${logback.varsion}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-core</artifactId>
-            <version>1.1.7</version>
+            <version>${logback.varsion}</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.7.21</version>
+            <version>${slf4j.varsion}</version>
         </dependency>
         <dependency>
             <groupId>com.alibaba</groupId>
@@ -162,6 +176,21 @@
                 <groupId>org.elasticsearch.client</groupId>
                 <artifactId>elasticsearch-rest-high-level-client</artifactId>
                 <version>${elasticsearch.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-core</artifactId>
+                <version>${log4j.varsion}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.varsion}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mybatis</groupId>
+                <artifactId>mybatis</artifactId>
+                <version>${mybatis.varsion}</version>
             </dependency>
 
             <dependency>
@@ -238,6 +267,11 @@
                 <groupId>com.nettyboot</groupId>
                 <artifactId>nettyboot-mysql</artifactId>
                 <version>${nb.mysql.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.nettyboot</groupId>
+                <artifactId>nettyboot-mysql-mybatis</artifactId>
+                <version>${nb.mysql.mybatis.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.nettyboot</groupId>
