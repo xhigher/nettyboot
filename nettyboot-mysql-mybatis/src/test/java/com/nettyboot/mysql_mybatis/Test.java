@@ -33,7 +33,7 @@ public class Test {
 ////
 
         SchoolDataDatabase schoolDataDatabase = new SchoolDataDatabase();
-        StudentInfoMapper mapper = schoolDataDatabase.getMapper(StudentInfoMapper.class);
+        StudentInfoMapper mapper = schoolDataDatabase.getMapperHandlerProxy(StudentInfoMapper.class);
         Example example = new Example(StudentInfo.class);
         Example.Criteria criteria = example.createCriteria();
         mapper.selectByExample(example);
