@@ -1,7 +1,7 @@
-package model.xhs;
+package com.nettyboot.mysql_mybatis.xhs;
 
 
-import com.nettyboot.mysql.XModel;
+import com.nettyboot.mysql_mybatis.XModel;
 
 public class SchoolDataDatabase extends XModel {
 
