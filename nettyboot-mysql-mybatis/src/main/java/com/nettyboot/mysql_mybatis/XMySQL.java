@@ -62,7 +62,9 @@ public class XMySQL {
 				TransactionFactory transactionFactory = new JdbcTransactionFactory();
 				Environment environment = new Environment(envId, transactionFactory, dataSource);
 				Configuration configuration = new Configuration(environment);
-				configuration.addMappers(mapperPackage);
+				if(mapperPackage != null && !mapperPackage.isEmpty()) {
+					configuration.addMappers(mapperPackage);
+				}
 
 				// tk.mybatis 绑定 configuration的mapper
 				MapperHelper mapperHelper = new MapperHelper();
