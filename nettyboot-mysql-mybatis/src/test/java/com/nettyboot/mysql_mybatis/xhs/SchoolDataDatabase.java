@@ -10,4 +10,10 @@ public class SchoolDataDatabase extends XModel {
 		return "school_data";
 	}
 
+
+	public <T> T getMapper(Class<T> mapperClazz){
+		return this.getMapperHandlerProxy(mapperClazz);
+	}
+
+
 }

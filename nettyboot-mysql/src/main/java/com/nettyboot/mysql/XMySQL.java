@@ -57,6 +57,15 @@ public class XMySQL {
 		}
 	}
 
+	public static HikariDataSource getDataSource(String dsName) {
+		try {
+			return dataSourceMap.get(dsName);
+		} catch (Exception e) {
+			logger.error("XMySQL.getDataSource.Exception:", e);
+		}
+		return null;
+	}
+
 	public static Connection getConnection(String dsName) {
 		try {
 			return dataSourceMap.get(dsName).getConnection();

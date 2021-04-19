@@ -2,16 +2,12 @@ package com.nettyboot.mysql_mybatis;
 
 import com.nettyboot.mysql_mybatis.beans.StudentInfo;
 import com.nettyboot.mysql_mybatis.entrys.StudentInfoMapper;
+import com.nettyboot.mysql_mybatis.xhs.SchoolDataDatabase;
 import com.nettyboot.mysql_mybatis.xhs.StudentInfoModel;
 import com.nettyboot.util.FileUtil;
-import org.apache.ibatis.io.Resources;
-import org.apache.ibatis.session.SqlSessionFactory;
-import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import tk.mybatis.mapper.entity.Example;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
 import java.util.Properties;
 
 /**
@@ -28,20 +24,30 @@ public class Test {
         Properties properties = FileUtil.getProperties(PROPERTIES_FILEPATH);
 
         XMySQL.init(properties);
+//
+//        StudentInfoModel studentInfoModel = new StudentInfoModel();
+////
+////        XContext context = new XContext();
+////        context.startTransaction();
+////        studentInfoModel.setTransaction(context);
+////
 
-        StudentInfoModel studentInfoModel = new StudentInfoModel();
+        SchoolDataDatabase schoolDataDatabase = new SchoolDataDatabase();
+        StudentInfoMapper mapper = schoolDataDatabase.getMapper(StudentInfoMapper.class);
+        Example example = new Example(StudentInfo.class);
+        Example.Criteria criteria = example.createCriteria();
+        mapper.selectByExample(example);
 
-//        XContext context = new XContext();
-//        context.startTransaction();
-//        studentInfoModel.setTransaction(context);
+        mapper.selectAll();
 
-        StudentInfoMapper mapper = studentInfoModel.getMapper();
-//        Example example = new Example(StudentInfo.class);
-//        Example.Criteria criteria = example.createCriteria();
-        List<StudentInfo> studentInfos = mapper.selectAll();
-        System.out.println(studentInfos);
-
-        studentInfoModel.closeSqlSession(studentInfoModel.getSession());
+        mapper.selectById123(1);
+        mapper.updateById(1, "223");
+//
+//
+//        List<StudentInfo> studentInfos = mapper.selectAll();
+//        System.out.println(studentInfos);
+//
+//        studentInfoModel.closeSqlSession(studentInfoModel.getSession());
 
 //        studentInfoModel.closeSqlSession();
 

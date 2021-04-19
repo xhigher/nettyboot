@@ -39,6 +39,10 @@
             <groupId>com.nettyboot</groupId>
             <artifactId>nettyboot-util</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.nettyboot</groupId>
+            <artifactId>nettyboot-mysql</artifactId>
+        </dependency>
     </dependencies>
 
 </project>

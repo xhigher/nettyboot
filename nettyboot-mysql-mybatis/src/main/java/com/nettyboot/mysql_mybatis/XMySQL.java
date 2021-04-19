@@ -37,20 +37,26 @@ public class XMySQL {
 			initStarted = true;
 			int size = Integer.valueOf(properties.getProperty("mysql.dataSource.size").trim());
 			for (int i = 1; i <= size; i++) {
-				HikariDataSource dataSource = new HikariDataSource();
-				dataSource.setDriverClassName(properties.getProperty("mysql.dataSource" + i + ".driverClassName"));
-				dataSource.setPoolName(properties.getProperty("mysql.dataSource" + i + ".name"));
-				dataSource.setJdbcUrl(properties.getProperty("mysql.dataSource" + i + ".url"));
-				dataSource.setUsername(properties.getProperty("mysql.dataSource" + i + ".user"));
-				dataSource.setPassword(properties.getProperty("mysql.dataSource" + i + ".password"));
-				dataSource.addDataSourceProperty("cachePrepStmts", properties.getProperty("mysql.dataSource" + i + ".cachePrepStmts"));
-				dataSource.addDataSourceProperty("prepStmtCacheSize", properties.getProperty("mysql.dataSource" + i + ".prepStmtCacheSize"));
-				dataSource.addDataSourceProperty("prepStmtCacheSqlLimit", properties.getProperty("mysql.dataSource" + i + ".prepStmtCacheSqlLimit"));
-				dataSource.setMaximumPoolSize(Integer.valueOf(properties.getProperty("mysql.dataSource" + i + ".maximumPoolSize")));
-				dataSource.setConnectionInitSql(properties.getProperty("mysql.dataSource" + i + ".connectionInitSql", "SET NAMES utf8"));
-				checkDataSource(dataSource);
+				String poolName = properties.getProperty("mysql.dataSource" + i + ".name");
+				HikariDataSource dataSource = com.nettyboot.mysql.XMySQL.getDataSource(poolName);
+				if(dataSource == null){
+					dataSource = new HikariDataSource();
+					dataSource.setDriverClassName(properties.getProperty("mysql.dataSource" + i + ".driverClassName"));
+					dataSource.setPoolName(properties.getProperty("mysql.dataSource" + i + ".name"));
+					dataSource.setJdbcUrl(properties.getProperty("mysql.dataSource" + i + ".url"));
+					dataSource.setUsername(properties.getProperty("mysql.dataSource" + i + ".user"));
+					dataSource.setPassword(properties.getProperty("mysql.dataSource" + i + ".password"));
+					dataSource.addDataSourceProperty("cachePrepStmts", properties.getProperty("mysql.dataSource" + i + ".cachePrepStmts"));
+					dataSource.addDataSourceProperty("prepStmtCacheSize", properties.getProperty("mysql.dataSource" + i + ".prepStmtCacheSize"));
+					dataSource.addDataSourceProperty("prepStmtCacheSqlLimit", properties.getProperty("mysql.dataSource" + i + ".prepStmtCacheSqlLimit"));
+					dataSource.setMaximumPoolSize(Integer.valueOf(properties.getProperty("mysql.dataSource" + i + ".maximumPoolSize")));
+					dataSource.setConnectionInitSql(properties.getProperty("mysql.dataSource" + i + ".connectionInitSql", "SET NAMES utf8"));
+					checkDataSource(dataSource);
+				}
 
+				// mybatis 环境id
 				String envId = properties.getProperty("mysql.dataSource" + i + ".env", "development");
+				// mybatis mapper所在包路径
 				String mapperPackage = properties.getProperty("mysql.dataSource" + i + ".mapperPackage");
 
 				TransactionFactory transactionFactory = new JdbcTransactionFactory();
@@ -58,15 +64,14 @@ public class XMySQL {
 				Configuration configuration = new Configuration(environment);
 				configuration.addMappers(mapperPackage);
 
+				// tk.mybatis 绑定 configuration的mapper
 				MapperHelper mapperHelper = new MapperHelper();
-				List<Class> classesFromPackage = FileUtil.getClassesFromPackage(mapperPackage);
-				for (int j = 0; j < classesFromPackage.size(); j++) {
-					mapperHelper.registerMapper(classesFromPackage.get(j));
-				}
 				mapperHelper.processConfiguration(configuration);
 
+				// 创建 SqlSessionFactory
 				SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(configuration);
-				sqlSessionMap.put(dataSource.getPoolName(), sqlSessionFactory);
+				// put
+				sqlSessionMap.put(poolName, sqlSessionFactory);
 			}
 			initOK = true;
 		}
@@ -84,12 +89,8 @@ public class XMySQL {
 	}
 
 	public static SqlSession getSqlSession(String dsName){
-		return getSqlSession(dsName, true);
-	}
-
-	public static SqlSession getSqlSession(String dsName, boolean autoCommit){
 		try {
-			return sqlSessionMap.get(dsName).openSession(autoCommit);
+			return sqlSessionMap.get(dsName).openSession(false);
 		} catch (Exception e) {
 			logger.error("XMySQL.getSqlSession.Exception:", e);
 		}

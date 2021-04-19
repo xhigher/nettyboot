@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nettyboot.mysql_mybatis.entrys.StudentInfoMapper">
+
+<!--    <select id="selectById" parameterType="int" resultType="com.nettyboot.mysql_mybatis.beans.StudentInfo">-->
+<!--      SELECT * from student_info where student_id = #{id}-->
+<!--    </select>-->
+
+    <update id="updateById" parameterType="map" >
+      update student_info set memo=#{memo} where student_id = #{id}
+    </update>
+    <select id="selectById123" resultType="com.nettyboot.mysql_mybatis.beans.StudentInfo">
+        SELECT * from student_info where student_id = #{id}
+    </select>
+</mapper>
