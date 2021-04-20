@@ -7,7 +7,7 @@
     <groupId>com.nettyboot</groupId>
     <artifactId>nettyboot-framework</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -36,9 +36,10 @@
         <log4j.varsion>2.13.2</log4j.varsion>
         <lombok.varsion>1.18.8</lombok.varsion>
         <mybatis.varsion>3.5.5</mybatis.varsion>
+        <tk.mybatis.varsion>4.1.5</tk.mybatis.varsion>
 
         <nb.config.version>1.0.1</nb.config.version>
-        <nb.util.version>1.0.1</nb.util.version>
+        <nb.util.version>1.0.2</nb.util.version>
         <nb.http.version>1.0.1</nb.http.version>
         <nb.logic.version>1.0.1</nb.logic.version>
         <nb.starter.version>1.0.1</nb.starter.version>
@@ -51,8 +52,9 @@
         <nb.nacos.version>1.0.1</nb.nacos.version>
         <nb.gateway.version>1.0.1</nb.gateway.version>
         <nb.biznode.version>1.0.1</nb.biznode.version>
-        <nb.mysql.version>1.0.1</nb.mysql.version>
-        <nb.mysql.mybatis.version>1.0.1</nb.mysql.mybatis.version>
+        <nb.mysql.version>1.0.2</nb.mysql.version>
+        <nb.mysql.mybatis.version>1.0.2</nb.mysql.mybatis.version>
+        <nb.mysql.mybatis.tk.version>1.0.1</nb.mysql.mybatis.tk.version>
         <nb.mongodb.version>1.0.1</nb.mongodb.version>
         <nb.redis.version>1.0.1</nb.redis.version>
         <nb.elasticsearch.version>1.0.1</nb.elasticsearch.version>
@@ -109,6 +111,7 @@
         <module>nettyboot-flink-kafka</module>
         <module>nettyboot-tomcat</module>
         <module>nettyboot-mysql-mybatis</module>
+        <module>nettyboot-mysql-mybatis-tk</module>
     </modules>
 
     <dependencies>
@@ -192,6 +195,11 @@
                 <artifactId>mybatis</artifactId>
                 <version>${mybatis.varsion}</version>
             </dependency>
+            <dependency>
+                <groupId>tk.mybatis</groupId>
+                <artifactId>mapper</artifactId>
+                <version>${tk.mybatis.varsion}</version>
+            </dependency>
 
             <dependency>
                 <groupId>com.nettyboot</groupId>
@@ -272,6 +280,11 @@
                 <groupId>com.nettyboot</groupId>
                 <artifactId>nettyboot-mysql-mybatis</artifactId>
                 <version>${nb.mysql.mybatis.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.nettyboot</groupId>
+                <artifactId>nettyboot-mysql-mybatis-tk</artifactId>
+                <version>${nb.mysql.mybatis.tk.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.nettyboot</groupId>
@@ -385,10 +398,20 @@
     </repositories>
 
     <distributionManagement>
+<!--        <repository>-->
+<!--            <id>nettyboot-repo</id>-->
+<!--            <url>file:D:/maven/nettyboot-repo</url>-->
+<!--        </repository>-->
         <repository>
-            <id>nettyboot-repo</id>
-            <url>file:D:/maven/nettyboot-repo</url>
+            <id>releases</id>
+            <name>gcip-releases</name>
+            <url>http://124.71.110.22:8081/repository/maven-releases/</url>
         </repository>
+        <snapshotRepository>
+            <id>snapshots</id>
+            <name>gcip-snapshots</name>
+            <url>http://124.71.110.22:8081/repository/maven-snapshots/</url>
+        </snapshotRepository>
     </distributionManagement>
 
 <!--    <profiles>-->
