@@ -11,6 +11,7 @@
 
     <artifactId>nettyboot-mysql-mybatis</artifactId>
     <packaging>jar</packaging>
+    <version>1.0.2</version>
 
     <dependencies>
         <dependency>
@@ -25,12 +26,6 @@
             <groupId>org.mybatis</groupId>
             <artifactId>mybatis</artifactId>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/tk.mybatis/mapper -->
-        <dependency>
-            <groupId>tk.mybatis</groupId>
-            <artifactId>mapper</artifactId>
-            <version>4.1.5</version>
-        </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
@@ -38,6 +33,7 @@
         <dependency>
             <groupId>com.nettyboot</groupId>
             <artifactId>nettyboot-util</artifactId>
+            <version>1.0.2</version>
         </dependency>
         <dependency>
             <groupId>com.nettyboot</groupId>

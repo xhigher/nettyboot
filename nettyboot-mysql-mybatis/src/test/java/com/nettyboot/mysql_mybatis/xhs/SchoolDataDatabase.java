@@ -1,9 +1,9 @@
 package com.nettyboot.mysql_mybatis.xhs;
 
 
-import com.nettyboot.mysql_mybatis.XModel;
+import com.nettyboot.mysql_mybatis.XMybatisModel;
 
-public class SchoolDataDatabase extends XModel {
+public class SchoolDataDatabase extends XMybatisModel {
 
 	@Override
 	protected String getDataSourceName() {

@@ -1,5 +1,8 @@
 package com.nettyboot.mysql_mybatis;
 
+import com.nettyboot.mysql.XBaseContext;
+import com.nettyboot.mysql.XContext;
+import com.nettyboot.mysql.XTransaction;
 import org.apache.ibatis.session.SqlSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,11 +15,11 @@ import java.lang.reflect.Proxy;
  * @copyright (c) xhigher 2015
  * @author xhigher    2015-3-26
  */
-public abstract class XModel {
+public abstract class XMybatisModel {
 
-    protected static Logger logger = LoggerFactory.getLogger(XModel.class);
+    protected static Logger logger = LoggerFactory.getLogger(XMybatisModel.class);
 
-    private XContext mContext = null;
+    private XBaseContext<XMybatisTransaction> mContext = null;
 
     protected abstract String getDataSourceName();
 
@@ -26,11 +29,11 @@ public abstract class XModel {
     }
 
     // 配置开启事务
-    public boolean setTransaction(XContext context) {
+    public boolean setTransaction(XBaseContext<XMybatisTransaction> context) {
         mContext = context;
         if (mContext != null && mContext.getTransaction() != null) {
-            if (mContext.getTransaction().getSqlSession() == null) {
-                return mContext.getTransaction().setConnection(XMySQL.getSqlSession(getDataSourceName()));
+            if (mContext.getTransaction().getConnection() == null) {
+                return mContext.getTransaction().setConnection(XMybatisMySQL.getSqlSession(getDataSourceName()));
             }
             return true;
         }
@@ -40,15 +43,15 @@ public abstract class XModel {
     // 获取 SqlSession
     public SqlSession getSqlSession() {
         if (!isBadTransaction()) {
-            return mContext.getTransaction().getSqlSession();
+            return mContext.getTransaction().getConnection();
         }
-        return XMySQL.getSqlSession(getDataSourceName());
+        return XMybatisMySQL.getSqlSession(getDataSourceName());
     }
 
     // 关闭 SqlSession
     public void closeSqlSession(SqlSession sqlSession) {
         if (isBadTransaction()) {
-            XMySQL.releaseSqlSession(sqlSession);
+            XMybatisMySQL.releaseSqlSession(sqlSession);
         }
     }
 
@@ -80,6 +83,7 @@ public abstract class XModel {
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
             // 获取sqlSession
             SqlSession sqlSession = getSqlSession();
+            logger.debug("getSqlSession: {}", sqlSession);
             try {
                 // 获取mapper
                 Object mapper = sqlSession.getMapper(mapperClazz);
@@ -87,7 +91,7 @@ public abstract class XModel {
                 Object result = method.invoke(mapper, args);
                 // 如果是非事务，则提交
                 if(isBadTransaction()){
-                    sqlSession.commit();
+                    sqlSession.commit(true);
                 }
                 // 返回结果
                 return result;
@@ -97,6 +101,7 @@ public abstract class XModel {
                 // 关闭sqlSession
                 if(sqlSession != null){
                     closeSqlSession(sqlSession);
+                    logger.debug("closeSqlSession: {}", sqlSession);
                 }
             }
             // 返回结果

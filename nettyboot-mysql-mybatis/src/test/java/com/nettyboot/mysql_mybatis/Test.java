@@ -3,9 +3,7 @@ package com.nettyboot.mysql_mybatis;
 import com.nettyboot.mysql_mybatis.beans.StudentInfo;
 import com.nettyboot.mysql_mybatis.entrys.StudentInfoMapper;
 import com.nettyboot.mysql_mybatis.xhs.SchoolDataDatabase;
-import com.nettyboot.mysql_mybatis.xhs.StudentInfoModel;
 import com.nettyboot.util.FileUtil;
-import tk.mybatis.mapper.entity.Example;
 
 import java.io.IOException;
 import java.util.Properties;
@@ -23,7 +21,7 @@ public class Test {
     public static void main(String[] args) throws IOException {
         Properties properties = FileUtil.getProperties(PROPERTIES_FILEPATH);
 
-        XMySQL.init(properties);
+        XMybatisMySQL.init(properties);
 //
 //        StudentInfoModel studentInfoModel = new StudentInfoModel();
 ////
@@ -34,11 +32,6 @@ public class Test {
 
         SchoolDataDatabase schoolDataDatabase = new SchoolDataDatabase();
         StudentInfoMapper mapper = schoolDataDatabase.getMapperHandlerProxy(StudentInfoMapper.class);
-        Example example = new Example(StudentInfo.class);
-        Example.Criteria criteria = example.createCriteria();
-        mapper.selectByExample(example);
-
-        mapper.selectAll();
 
         mapper.selectById123(1);
         mapper.updateById(1, "223");
