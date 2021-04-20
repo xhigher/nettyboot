@@ -38,41 +38,41 @@
         <mybatis.varsion>3.5.5</mybatis.varsion>
         <tk.mybatis.varsion>4.1.5</tk.mybatis.varsion>
 
-        <nb.config.version>1.0.1</nb.config.version>
+        <nb.config.version>1.0.2</nb.config.version>
         <nb.util.version>1.0.2</nb.util.version>
-        <nb.http.version>1.0.1</nb.http.version>
-        <nb.logic.version>1.0.1</nb.logic.version>
-        <nb.starter.version>1.0.1</nb.starter.version>
-        <nb.server.version>1.0.1</nb.server.version>
-        <nb.webserver.version>1.0.1</nb.webserver.version>
-        <nb.rpcmessage.version>1.0.1</nb.rpcmessage.version>
-        <nb.rpcserver.version>1.0.1</nb.rpcserver.version>
-        <nb.rpcclienb.version>1.0.1</nb.rpcclienb.version>
-        <nb.zookeeper.version>1.0.1</nb.zookeeper.version>
-        <nb.nacos.version>1.0.1</nb.nacos.version>
-        <nb.gateway.version>1.0.1</nb.gateway.version>
-        <nb.biznode.version>1.0.1</nb.biznode.version>
+        <nb.http.version>1.0.2</nb.http.version>
+        <nb.logic.version>1.0.2</nb.logic.version>
+        <nb.starter.version>1.0.2</nb.starter.version>
+        <nb.server.version>1.0.2</nb.server.version>
+        <nb.webserver.version>1.0.2</nb.webserver.version>
+        <nb.rpcmessage.version>1.0.2</nb.rpcmessage.version>
+        <nb.rpcserver.version>1.0.2</nb.rpcserver.version>
+        <nb.rpcclienb.version>1.0.2</nb.rpcclienb.version>
+        <nb.zookeeper.version>1.0.2</nb.zookeeper.version>
+        <nb.nacos.version>1.0.2</nb.nacos.version>
+        <nb.gateway.version>1.0.2</nb.gateway.version>
+        <nb.biznode.version>1.0.2</nb.biznode.version>
         <nb.mysql.version>1.0.2</nb.mysql.version>
         <nb.mysql.mybatis.version>1.0.2</nb.mysql.mybatis.version>
-        <nb.mysql.mybatis.tk.version>1.0.1</nb.mysql.mybatis.tk.version>
-        <nb.mongodb.version>1.0.1</nb.mongodb.version>
-        <nb.redis.version>1.0.1</nb.redis.version>
-        <nb.elasticsearch.version>1.0.1</nb.elasticsearch.version>
-        <nb.task.version>1.0.1</nb.task.version>
-        <nb.rabbitmq.version>1.0.1</nb.rabbitmq.version>
-        <nb.kafka.version>1.0.1</nb.kafka.version>
-        <nb.wechat.version>1.0.1</nb.wechat.version>
-        <nb.alipay.version>1.0.1</nb.alipay.version>
-        <nb.apple.version>1.0.1</nb.apple.version>
-        <nb.admin.version>1.0.1</nb.admin.version>
-        <nb.upload.version>1.0.1</nb.upload.version>
-        <nb.aliyun.version>1.0.1</nb.aliyun.version>
-        <nb.mail.version>1.0.1</nb.mail.version>
-        <nb.captcha.version>1.0.1</nb.captcha.version>
-        <nb.flink.version>1.0.1</nb.flink.version>
-        <nb.flink.server.version>1.0.1</nb.flink.server.version>
-        <nb.flink.kafka.version>1.0.1</nb.flink.kafka.version>
-        <nb.tomcat.version>1.0.1</nb.tomcat.version>
+        <nb.mysql.mybatis.tk.version>1.0.2</nb.mysql.mybatis.tk.version>
+        <nb.mongodb.version>1.0.2</nb.mongodb.version>
+        <nb.redis.version>1.0.2</nb.redis.version>
+        <nb.elasticsearch.version>1.0.2</nb.elasticsearch.version>
+        <nb.task.version>1.0.2</nb.task.version>
+        <nb.rabbitmq.version>1.0.2</nb.rabbitmq.version>
+        <nb.kafka.version>1.0.2</nb.kafka.version>
+        <nb.wechat.version>1.0.2</nb.wechat.version>
+        <nb.alipay.version>1.0.2</nb.alipay.version>
+        <nb.apple.version>1.0.2</nb.apple.version>
+        <nb.admin.version>1.0.2</nb.admin.version>
+        <nb.upload.version>1.0.2</nb.upload.version>
+        <nb.aliyun.version>1.0.2</nb.aliyun.version>
+        <nb.mail.version>1.0.2</nb.mail.version>
+        <nb.captcha.version>1.0.2</nb.captcha.version>
+        <nb.flink.version>1.0.2</nb.flink.version>
+        <nb.flink.server.version>1.0.2</nb.flink.server.version>
+        <nb.flink.kafka.version>1.0.2</nb.flink.kafka.version>
+        <nb.tomcat.version>1.0.2</nb.tomcat.version>
     </properties>
 
     <modules>
