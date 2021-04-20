@@ -4,6 +4,8 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.nettyboot.config.TaskAnnotation;
 import com.nettyboot.config.TaskType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.JarURLConnection;
@@ -11,6 +13,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.ListIterator;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -19,6 +23,8 @@ import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 public class FileUtil {
+
+	private static final Logger logger = LoggerFactory.getLogger(FileUtil.class);
 
 	public static Properties getProperties(String filepath){
 		Properties properties = null;
@@ -63,7 +69,7 @@ public class FileUtil {
 		}
 		return resultBuf.toString();
 	}
-	
+
 	public static String readFile(String fileName) {
 		FileReader fReader = null;
 		BufferedReader bufReader = null;
@@ -327,6 +333,68 @@ public class FileUtil {
 				listClassFiles(tf, classFiles);
 			}else if(tf.isFile() && tf.getName().endsWith(".class")){
 				classFiles.add(tf.getAbsolutePath());
+			}
+		}
+	}
+
+	public static List<String> getXmlFilesFromPath(String targetPath){
+		File file = null;
+		List<String> xmlFiles = null;
+		String path = targetPath;
+		List<String> xmlList = new ArrayList<>();
+		try{
+			URL url = null;
+			JarURLConnection jarConnection = null;
+			JarFile jarFile = null;
+			Enumeration<JarEntry> jarEntryEnumeration = null;
+			String jarEntryName = null;
+			String fullXmlPath = null;
+			Enumeration<URL> urls = Thread.currentThread().getContextClassLoader().getResources(path);
+			while (urls.hasMoreElements()) {
+				url = urls.nextElement();
+				if ("jar".equalsIgnoreCase(url.getProtocol())) {
+					jarConnection = (JarURLConnection) url.openConnection();
+					if (jarConnection != null) {
+						jarFile = jarConnection.getJarFile();
+						if (jarFile != null) {
+							jarEntryEnumeration = jarFile.entries();
+							while (jarEntryEnumeration.hasMoreElements()) {
+								jarEntryName = jarEntryEnumeration.nextElement().getName();
+								if (jarEntryName.contains(".xml") && jarEntryName.startsWith(targetPath)) {
+									fullXmlPath = jarEntryName;
+									xmlList.add(fullXmlPath);
+								}
+							}
+						}
+					}
+				}else{
+					file = new File(url.toURI());
+					if (file != null) {
+						xmlFiles = new ArrayList<String>();
+						listXmlFiles(file, xmlFiles);
+						for (String xml : xmlFiles) {
+							fullXmlPath = xml.replaceAll("[\\\\]", "/");
+							fullXmlPath = fullXmlPath.substring(fullXmlPath.indexOf(targetPath));
+							xmlList.add(fullXmlPath);
+						}
+					}
+				}
+			}
+		}catch(Exception e) {
+			xmlList = null;
+		}
+		return xmlList;
+	}
+
+	private static void listXmlFiles(File file, List<String> xmlFiles){
+		File tf = null;
+		File[] files = file.listFiles();
+		for(int i=0; i<files.length; i++){
+			tf = files[i];
+			if(tf.isDirectory()){
+				listXmlFiles(tf, xmlFiles);
+			}else if(tf.isFile() && tf.getName().endsWith(".xml")){
+				xmlFiles.add(tf.getAbsolutePath());
 			}
 		}
 	}
