@@ -11,6 +11,7 @@
 
     <artifactId>nettyboot-mysql</artifactId>
     <packaging>jar</packaging>
+    <version>1.0.2</version>
 
     <dependencies>
         <dependency>

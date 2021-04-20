@@ -10,14 +10,13 @@ import java.sql.SQLException;
  * @copyright (c) xhigher 2015 
  * @author xhigher    2015-3-26 
  */
-public class XTransaction {
+public class XTransaction extends XBaseTransaction<Connection> {
 
 	private static final Logger logger = LoggerFactory.getLogger(XModel.class);
 	
 	private Connection connnection;
 	
-	private boolean isEnded = false;
-	
+	@Override
 	public boolean setConnection(Connection conn) {
 		if(connnection == null) {
 			connnection = conn;
@@ -31,14 +30,12 @@ public class XTransaction {
 		return false;
 	}
 	
+	@Override
 	public Connection getConnection() {
 		return connnection;
 	}
 	
-	public boolean isEnded() {
-		return this.isEnded;
-	}
-	
+	@Override
 	public boolean end(boolean success){
 		if(!isEnded) {
 			try {

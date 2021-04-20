@@ -43,7 +43,7 @@ public abstract class XModel {
     private boolean mDistinct = false;
     private SQLException mException = null;
 
-    private XContext mContext = null;
+    private XBaseContext<XTransaction> mContext = null;
 
     protected abstract String getDataSourceName();
 
@@ -53,7 +53,7 @@ public abstract class XModel {
         return (mContext == null || mContext.getTransaction() == null || mContext.getTransaction().isEnded());
     }
 
-    public boolean setTransaction(XContext context) {
+    public boolean setTransaction(XBaseContext<XTransaction> context) {
         mContext = context;
         if (mContext != null && mContext.getTransaction() != null) {
             if (mContext.getTransaction().getConnection() == null) {
