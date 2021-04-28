@@ -66,10 +66,15 @@ public class XMybatisMySQL {
 				Environment environment = new Environment(envId, transactionFactory, dataSource);
 				Configuration configuration = new Configuration(environment);
 				// 绑定 mapper
-				if(mapperPackage != null && !mapperPackage.isEmpty()) {
-					configuration.addMappers(mapperPackage);
-				}else if(mapperPath != null && !mapperPath.isEmpty()){
+				if(mapperPath != null && !mapperPath.isEmpty()){
 					parseResourceMapperXmlFiles(mapperPath, configuration);
+				}
+				if(mapperPackage != null && !mapperPackage.isEmpty()) {
+					try {
+						configuration.addMappers(mapperPackage);
+					} catch (Exception e) {
+						logger.warn("configuration.addMappers.mapperPackage: {}, {}", mapperPackage, e.toString());
+					}
 				}
 
 				// 创建 SqlSessionFactory
@@ -151,8 +156,12 @@ public class XMybatisMySQL {
 	}
 
 	public static SqlSession getSqlSession(String dsName){
+		return getSqlSession(dsName, false);
+	}
+
+	public static SqlSession getSqlSession(String dsName, boolean autoCommit){
 		try {
-			return sqlSessionFactoryMap.get(dsName).openSession(false);
+			return sqlSessionFactoryMap.get(dsName).openSession(autoCommit);
 		} catch (Exception e) {
 			logger.error("XMySQL.getSqlSession.Exception:", e);
 		}
