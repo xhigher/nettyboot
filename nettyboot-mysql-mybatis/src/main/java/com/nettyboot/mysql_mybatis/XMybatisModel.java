@@ -97,6 +97,7 @@ public abstract class XMybatisModel {
                 return result;
             }catch (Exception e){
                 logger.error("MapperHandler.invoke.Exception", e);
+                throw e;
             }finally {
                 // 关闭sqlSession
                 if(sqlSession != null){
@@ -104,8 +105,6 @@ public abstract class XMybatisModel {
                     logger.debug("closeSqlSession: {}", sqlSession);
                 }
             }
-            // 返回结果
-            return null;
         }
     }
 
