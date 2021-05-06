@@ -37,6 +37,8 @@
         <lombok.varsion>1.18.8</lombok.varsion>
         <mybatis.varsion>3.5.5</mybatis.varsion>
         <tk.mybatis.varsion>4.1.5</tk.mybatis.varsion>
+        <powermock.version>2.0.0</powermock.version>
+        <junit.version>4.13.2</junit.version>
 
         <nb.config.version>1.0.2</nb.config.version>
         <nb.util.version>1.0.2</nb.util.version>
@@ -140,6 +142,33 @@
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
             <version>${fastjson.version}</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/junit/junit -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- PowerMock JUnit 4.4+ Module -->
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-module-junit4</artifactId>
+            <version>${powermock.version}</version>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <artifactId>objenesis</artifactId>
+                    <groupId>org.objenesis</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-api-mockito2</artifactId>
+            <version>${powermock.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -398,20 +427,10 @@
     </repositories>
 
     <distributionManagement>
-<!--        <repository>-->
-<!--            <id>nettyboot-repo</id>-->
-<!--            <url>file:D:/maven/nettyboot-repo</url>-->
-<!--        </repository>-->
         <repository>
-            <id>releases</id>
-            <name>gcip-releases</name>
-            <url>http://124.71.110.22:8081/repository/maven-releases/</url>
+            <id>nettyboot-repo</id>
+            <url>file:D:/maven/nettyboot-repo</url>
         </repository>
-        <snapshotRepository>
-            <id>snapshots</id>
-            <name>gcip-snapshots</name>
-            <url>http://124.71.110.22:8081/repository/maven-snapshots/</url>
-        </snapshotRepository>
     </distributionManagement>
 
 <!--    <profiles>-->
