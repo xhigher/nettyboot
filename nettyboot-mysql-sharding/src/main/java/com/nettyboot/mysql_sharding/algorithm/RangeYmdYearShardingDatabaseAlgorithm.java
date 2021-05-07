@@ -17,8 +17,8 @@
 
 package com.nettyboot.mysql_sharding.algorithm;
 
-import com.google.common.collect.BoundType;
 import com.google.common.collect.Range;
+import com.nettyboot.mysql_sharding.config.YmdConfig;
 import org.apache.shardingsphere.api.sharding.standard.RangeShardingAlgorithm;
 import org.apache.shardingsphere.api.sharding.standard.RangeShardingValue;
 import org.slf4j.Logger;
@@ -36,49 +36,17 @@ public final class RangeYmdYearShardingDatabaseAlgorithm implements RangeShardin
     public Collection<String> doSharding(final Collection<String> databaseNames, final RangeShardingValue<String> shardingValueRange) {
         Set<String> result = new LinkedHashSet<>();
 
+        // 时间范围
         Range<String> range = shardingValueRange.getValueRange();
-        Integer startYear = null;
-        Integer endYear = null;
-        if(range.hasLowerBound()){
-            try {
-                startYear = Integer.parseInt(range.lowerEndpoint().substring(0, 4));
-            }catch (IllegalStateException e){
-                logger.error("RangeYmdYearShardingDatabaseAlgorithm.doSharding.IllegalStateException", e);
-            }catch (Exception e){
-                logger.error("RangeYmdYearShardingDatabaseAlgorithm.doSharding.Exception", e);
-            }
+        // 获取年份闭区间， [2019, 2021]
+        Range<Integer> yearRange = YmdConfig.getYmdYearRange(range);
+        if(yearRange == null){
+            throw new UnsupportedOperationException();
         }
-        if(range.hasUpperBound()){
-            try {
-                endYear = Integer.parseInt(range.upperEndpoint().substring(0, 4));
-            }catch (IllegalStateException e){
-                logger.error("RangeYmdYearShardingDatabaseAlgorithm.doSharding.IllegalStateException", e);
-            }catch (Exception e){
-                logger.error("RangeYmdYearShardingDatabaseAlgorithm.doSharding.Exception", e);
-            }
-        }
-
-        // 查找拼配数据库
+        // 查找匹配数据库
         for (String each : databaseNames) {
             int year = Integer.parseInt(each.substring(each.length() - 4));
-            boolean startFlag = false;
-            boolean endFlag = false;
-            if(startYear != null){
-                if(year > startYear || (range.lowerBoundType() == BoundType.CLOSED && year == startYear)){
-                    startFlag = true;
-                }
-            }else{
-                startFlag = true;
-            }
-            if(endYear != null){
-                if(year < endYear || (range.upperBoundType() == BoundType.CLOSED && year == endYear)){
-                    endFlag = true;
-                }
-            }else {
-                endFlag = true;
-            }
-
-            if (startFlag && endFlag) {
+            if(yearRange.contains(year)){
                 result.add(each);
             }
         }

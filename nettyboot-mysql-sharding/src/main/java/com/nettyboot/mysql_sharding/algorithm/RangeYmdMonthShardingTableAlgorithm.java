@@ -17,8 +17,8 @@
 
 package com.nettyboot.mysql_sharding.algorithm;
 
-import com.google.common.collect.BoundType;
 import com.google.common.collect.Range;
+import com.nettyboot.mysql_sharding.config.YmdConfig;
 import org.apache.shardingsphere.api.sharding.standard.RangeShardingAlgorithm;
 import org.apache.shardingsphere.api.sharding.standard.RangeShardingValue;
 import org.slf4j.Logger;
@@ -38,47 +38,16 @@ public final class RangeYmdMonthShardingTableAlgorithm implements RangeShardingA
 
         // 查找时间范围
         Range<String> range = shardingValue.getValueRange();
-        Integer startYm = null;
-        Integer endYm = null;
-        if(range.hasLowerBound()){
-            try {
-                startYm = Integer.parseInt(range.lowerEndpoint().replace("-", "").substring(0, 6));
-            }catch (IllegalStateException e){
-                logger.error("RangeYmdYearShardingDatabaseAlgorithm.doSharding.IllegalStateException", e);
-            }catch (Exception e){
-                logger.error("RangeYmdYearShardingDatabaseAlgorithm.doSharding.Exception", e);
-            }
-        }
-        if(range.hasUpperBound()){
-            try {
-                endYm = Integer.parseInt(range.upperEndpoint().replace("-", "").substring(0, 6));
-            }catch (IllegalStateException e){
-                logger.error("RangeYmdYearShardingDatabaseAlgorithm.doSharding.IllegalStateException", e);
-            }catch (Exception e){
-                logger.error("RangeYmdYearShardingDatabaseAlgorithm.doSharding.Exception", e);
-            }
+        // 获取年月份闭区间， 如：[202001, 202111]
+        Range<Integer> ymRange = YmdConfig.getYmdMonthRange(range);
+        if(ymRange == null){
+            throw new UnsupportedOperationException();
         }
 
         // 查找对应表
         for (String each : tableNames) {
             int ym = Integer.parseInt(each.substring(each.length() - 6));
-            boolean startFlag = false;
-            boolean endFlag = false;
-            if(startYm != null){
-                if(ym > startYm || (range.lowerBoundType() == BoundType.CLOSED && ym == startYm)){
-                    startFlag = true;
-                }
-            }else{
-                startFlag = true;
-            }
-            if(endYm != null){
-                if(ym < endYm || (range.upperBoundType() == BoundType.CLOSED && ym == endYm)){
-                    endFlag = true;
-                }
-            }else {
-                endFlag = true;
-            }
-            if (startFlag && endFlag) {
+            if(ymRange.contains(ym)){
                 result.add(each);
             }
         }

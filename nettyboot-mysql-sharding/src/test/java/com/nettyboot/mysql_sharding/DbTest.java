@@ -7,6 +7,8 @@ import com.nettyboot.util.FileUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
 import java.io.IOException;
@@ -28,6 +30,7 @@ import java.util.Properties;
  */
 public class DbTest {
 
+    private static final Logger logger = LoggerFactory.getLogger(DbTest.class);
     private static final String PROPERTIES_FILEPATH = "/application.properties";
     private static DataSource dataSource = null;
     private static Connection connection = null;
@@ -51,7 +54,8 @@ public class DbTest {
 
     @Test
     public void test(){
-        String sql = "SELECT COUNT(1) FROM t_order where ymd >= '2019-02' and ymd < '2021-02'";
+//        String sql = "SELECT * FROM t_order o RIGHT JOIN (SELECT MAX(`order_id`) AS `max_order_id` FROM t_order where ymd > '2019-12' and ymd <= '2021-02' ) AS tmp on o.`order_id`=tmp.max_order_id  where ymd > '2019-12' and ymd <= '2021-02'";
+        String sql = "SELECT MAX(`order_id`) AS `max_order_id` FROM t_order where ymd > '2019-12' and ymd <= '2021-02'";
 
         JSONArray objects = selectBySQL(sql);
         System.out.println(objects);
@@ -75,7 +79,7 @@ public class DbTest {
             rs = pstmt.executeQuery();
             return getJSONArray(rs);
         } catch (SQLException e) {
-//            logger.error("XModel.selectBySQL.SQLException:" + sql, e);
+            logger.error("XModel.selectBySQL.SQLException:" + sql, e);
         } finally {
 
 //            this.closeConnection(rs, pstmt, conn);
