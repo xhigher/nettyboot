@@ -17,16 +17,12 @@
 
     <dependencies>
         <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-all</artifactId>
+        </dependency>
+        <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.zaxxer</groupId>
-            <artifactId>HikariCP</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.nettyboot</groupId>
-            <artifactId>nettyboot-util</artifactId>
         </dependency>
 
         <dependency>
@@ -72,12 +68,18 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
+            <version>1.1.7</version>
+        </dependency>
+        <dependency>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
         </dependency>
 
         <dependency>
             <groupId>com.nettyboot</groupId>
-            <artifactId>nettyboot-starter</artifactId>
+            <artifactId>nettyboot-util</artifactId>
         </dependency>
+
     </dependencies>
 
 </project>
