@@ -154,6 +154,10 @@ public abstract class BaseLogic implements Cloneable {
 		return outputResult(ErrorCode.OK, null, data);
 	}
 
+	public String successResult(Object data){
+		return outputResult(ErrorCode.OK, null, data);
+	}
+
 	public String errorResult(int code, JSONObject data){
 		return outputResult(code, null, data);
 	}
@@ -198,16 +202,16 @@ public abstract class BaseLogic implements Cloneable {
 		long start = System.currentTimeMillis();
 		String result = null;
 		try{
-			String prepareResult = this.prepare();
-			if(prepareResult != null){
-				return prepareResult;
-			}
-
 			if(this.requireSession()){
 				String sessionResult = this.checkSession();
 				if(sessionResult != null){
 					return sessionResult;
 				}
+			}
+
+			String prepareResult = this.prepare();
+			if(prepareResult != null){
+				return prepareResult;
 			}
 
 			this.beforeExecute();
