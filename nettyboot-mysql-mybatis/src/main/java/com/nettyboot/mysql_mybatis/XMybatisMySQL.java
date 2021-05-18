@@ -16,6 +16,7 @@ import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.sql.DataSource;
 import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
@@ -49,7 +50,7 @@ public class XMybatisMySQL {
 			for (int i = 1; i <= size; i++) {
 				String poolName = properties.getProperty("mysql.dataSource" + i + ".name");
 				// 调用 mysql.XMySQL 的连接池，避免重复创建连接池
-				HikariDataSource dataSource = XMySQL.getDataSource(poolName);
+				DataSource dataSource = XMySQL.getDataSource(poolName);
 				if(dataSource == null){
 					// 连接池不存在，创建连接池
 					dataSource = createDataSource(properties, i);

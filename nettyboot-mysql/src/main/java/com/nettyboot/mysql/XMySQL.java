@@ -4,6 +4,7 @@ import com.zaxxer.hikari.HikariDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -16,7 +17,7 @@ public class XMySQL {
 
 	private static final Logger logger = LoggerFactory.getLogger(XMySQL.class);
 
-	private static final Map<String, HikariDataSource> dataSourceMap = new HashMap<String, HikariDataSource>();
+	private static final Map<String, DataSource> dataSourceMap = new HashMap<String, DataSource>();
 	public static final List<String> poolNameList = new ArrayList<>();
 
 	private static boolean initStarted = false;
@@ -70,7 +71,7 @@ public class XMySQL {
 		}
 	}
 
-	public static HikariDataSource getDataSource(String dsName) {
+	public static DataSource getDataSource(String dsName) {
 		try {
 			return dataSourceMap.get(dsName);
 		} catch (Exception e) {
