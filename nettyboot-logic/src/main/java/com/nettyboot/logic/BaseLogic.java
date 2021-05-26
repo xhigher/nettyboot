@@ -194,6 +194,10 @@ public abstract class BaseLogic implements Cloneable {
 
 	}
 
+	protected void afterExecute(String result){
+
+	}
+
 	protected String checkSession(){
 		return null;
 	}
@@ -216,7 +220,11 @@ public abstract class BaseLogic implements Cloneable {
 
 			this.beforeExecute();
 
-			return this.execute();
+			result = this.execute();
+
+			this.afterExecute(result);
+
+			return result;
 		}catch(Exception e){
 			logger.error(this.getClass().getSimpleName(), e);
 			return errorInternalResult();
