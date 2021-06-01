@@ -2,7 +2,7 @@ package com.nettyboot.rpcclient;
 
 public class SimpleException extends RuntimeException {
 
-    private static final long serialVersionUID = 5196421433506179782L;
+    private static final long serialVersionUID = 3300883970826150060L;
 
     private final ExceptionType type;
     
