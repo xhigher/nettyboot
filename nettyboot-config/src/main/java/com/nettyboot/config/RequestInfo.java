@@ -10,6 +10,7 @@ import java.util.Map;
 
 public class RequestInfo implements Serializable {
 
+	private static final long serialVersionUID = 933508826104865145L;
 
 	protected Integer version;
 	protected String module;

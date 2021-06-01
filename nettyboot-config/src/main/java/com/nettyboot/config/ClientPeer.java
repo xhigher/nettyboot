@@ -3,6 +3,8 @@ import java.io.Serializable;
 
 public class ClientPeer implements Serializable {
 
+	private static final long serialVersionUID = 2776539817759418128L;
+
 	private String peerid = null;
 	private ClientType type = null;
 	private int flag = 0;

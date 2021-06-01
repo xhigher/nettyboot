@@ -11,6 +11,8 @@ import com.nettyboot.util.StringUtil;
 
 public class SimpleMessage implements Serializable {
 
+    private static final long serialVersionUID = 8204150940469547412L;
+
     private String msgid;
     private MessageType type;
     private Object data;
