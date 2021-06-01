@@ -58,6 +58,10 @@ public abstract class BaseLogic implements Cloneable {
 		return requestInfo.getParameters().containsKey(name);
 	}
 
+	public JSONObject getParameters(){
+		return requestInfo.getParameters();
+	}
+
 	public String getStringParameter(String name){
 		return requestInfo.getParameters().getString(name);
 	}
