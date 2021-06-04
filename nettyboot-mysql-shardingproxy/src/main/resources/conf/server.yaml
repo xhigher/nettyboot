@@ -22,11 +22,11 @@
 ######################################################################################################
 #
 #orchestration:
-#  orchestration_ds:
+#  orchestration_ds02:
 #    orchestrationType: registry_center,config_center,distributed_lock_manager
 #    instanceType: zookeeper
 #    serverLists: jtserver:2181,jtserver:2182,jtserver:2183
-#    namespace: orchestration
+#    namespace: orchestration02
 #    props:
 #      overwrite: false
 #      retryIntervalMilliseconds: 500
