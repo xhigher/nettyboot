@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>nettyboot-shardingproxy-config</artifactId>
+    <artifactId>nettyboot-mysql-sharding-config</artifactId>
     <packaging>jar</packaging>
 
     <dependencies>
