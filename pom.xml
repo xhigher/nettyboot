@@ -81,6 +81,8 @@
         <nb.flink.server.version>1.0.3</nb.flink.server.version>
         <nb.flink.kafka.version>1.0.3</nb.flink.kafka.version>
         <nb.tomcat.version>1.0.3</nb.tomcat.version>
+        <nb.chromedriver.version>1.0.3</nb.chromedriver.version>
+        <nb.chromedriver.pool.version>1.0.3</nb.chromedriver.pool.version>
     </properties>
 
     <modules>
@@ -123,6 +125,8 @@
         <module>nettyboot-mysql-sharding</module>
         <module>nettyboot-mysql-sharding-config</module>
         <module>nettyboot-mysql-shardingproxy</module>
+        <module>nettyboot-chromedriver</module>
+        <module>nettyboot-chromedriver-pool</module>
     </modules>
 
     <dependencies>
@@ -438,6 +442,16 @@
                 <groupId>com.nettyboot</groupId>
                 <artifactId>nettyboot-tomcat</artifactId>
                 <version>${nb.tomcat.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.nettyboot</groupId>
+                <artifactId>nettyboot-chromedriver</artifactId>
+                <version>${nb.chromedriver.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.nettyboot</groupId>
+                <artifactId>nettyboot-chromedriver-pool</artifactId>
+                <version>${nb.chromedriver.pool.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
