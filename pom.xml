@@ -40,6 +40,8 @@
         <tk.mybatis.varsion>4.1.5</tk.mybatis.varsion>
         <powermock.version>2.0.0</powermock.version>
         <junit.version>4.13.2</junit.version>
+        <seleniumhq.selenium.version>3.141.59</seleniumhq.selenium.version>
+        <commons-pool2.version>2.9.0</commons-pool2.version>
 
         <nb.config.version>1.0.3</nb.config.version>
         <nb.util.version>1.0.3</nb.util.version>
@@ -59,6 +61,8 @@
         <nb.mysql.mybatis.version>1.0.3</nb.mysql.mybatis.version>
         <nb.mysql.mybatis.tk.version>1.0.3</nb.mysql.mybatis.tk.version>
         <nb.mysql.sharding.version>1.0.3</nb.mysql.sharding.version>
+        <nb.mysql.sharding.config.version>1.0.3</nb.mysql.sharding.config.version>
+        <nb.mysql.shardingproxy.version>1.0.3</nb.mysql.shardingproxy.version>
         <nb.mongodb.version>1.0.3</nb.mongodb.version>
         <nb.redis.version>1.0.3</nb.redis.version>
         <nb.elasticsearch.version>1.0.3</nb.elasticsearch.version>
@@ -117,6 +121,8 @@
         <module>nettyboot-mysql-mybatis</module>
         <module>nettyboot-mysql-mybatis-tk</module>
         <module>nettyboot-mysql-sharding</module>
+        <module>nettyboot-mysql-sharding-config</module>
+        <module>nettyboot-mysql-shardingproxy</module>
     </modules>
 
     <dependencies>
@@ -205,6 +211,11 @@
             <dependency>
                 <groupId>org.apache.shardingsphere</groupId>
                 <artifactId>sharding-jdbc-core</artifactId>
+                <version>${shardingsphere.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.shardingsphere</groupId>
+                <artifactId>sharding-core-api</artifactId>
                 <version>${shardingsphere.version}</version>
             </dependency>
             <dependency>
@@ -327,6 +338,16 @@
                 <groupId>com.nettyboot</groupId>
                 <artifactId>nettyboot-mysql-sharding</artifactId>
                 <version>${nb.mysql.sharding.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.nettyboot</groupId>
+                <artifactId>nettyboot-mysql-sharding-config</artifactId>
+                <version>${nb.mysql.sharding.config.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.nettyboot</groupId>
+                <artifactId>nettyboot-mysql-shardingproxy</artifactId>
+                <version>${nb.mysql.shardingproxy.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.nettyboot</groupId>
