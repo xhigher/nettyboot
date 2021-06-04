@@ -1,4 +1,4 @@
-package com.nettyboot.shardingproxy.config.util;
+package com.nettyboot.mysql.sharding.config.util;
 
 import org.apache.shardingsphere.api.sharding.standard.PreciseShardingValue;
 

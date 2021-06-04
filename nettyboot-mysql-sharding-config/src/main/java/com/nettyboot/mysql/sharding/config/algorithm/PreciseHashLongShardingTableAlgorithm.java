@@ -15,25 +15,27 @@
  * limitations under the License.
  */
 
-package com.nettyboot.shardingproxy.config.algorithm;
+package com.nettyboot.mysql.sharding.config.algorithm;
 
-import com.nettyboot.shardingproxy.config.util.ColumnValueUtil;
+import com.nettyboot.mysql.sharding.config.util.ColumnValueUtil;
 import com.nettyboot.util.StringUtil;
 import org.apache.shardingsphere.api.sharding.standard.PreciseShardingAlgorithm;
 import org.apache.shardingsphere.api.sharding.standard.PreciseShardingValue;
 
 import java.util.Collection;
 
-public final class PreciseHashLongShardingDatabaseAlgorithm implements PreciseShardingAlgorithm<Long> {
+public final class PreciseHashLongShardingTableAlgorithm implements PreciseShardingAlgorithm<Long> {
     
     @Override
-    public String doSharding(final Collection<String> databaseNames, final PreciseShardingValue<Long> shardingValue) {
-        String dbEnd = "_" + StringUtil.hashTableId(ColumnValueUtil.getLongColumnLongValue(shardingValue), databaseNames.size());
-        for (String each : databaseNames) {
-            if(each.endsWith(dbEnd)){
+    public String doSharding(final Collection<String> tableNames, final PreciseShardingValue<Long> shardingValue) {
+        String dbEnd = "_" + StringUtil.hashTableId(ColumnValueUtil.getLongColumnLongValue(shardingValue), tableNames.size());
+        for (String each : tableNames) {
+            if (each.endsWith(dbEnd)) {
                 return each;
             }
         }
-        throw new UnsupportedOperationException();
+//        throw new UnsupportedOperationException();
+        return null;
     }
+
 }

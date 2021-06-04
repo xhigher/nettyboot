@@ -15,21 +15,20 @@
  * limitations under the License.
  */
 
-package com.nettyboot.shardingproxy.config.algorithm;
+package com.nettyboot.mysql.sharding.config.algorithm;
 
-import com.nettyboot.util.StringUtil;
 import org.apache.shardingsphere.api.sharding.standard.PreciseShardingAlgorithm;
 import org.apache.shardingsphere.api.sharding.standard.PreciseShardingValue;
 
 import java.util.Collection;
 
-public final class PreciseHashStringShardingDatabaseAlgorithm implements PreciseShardingAlgorithm<String> {
-    
+public final class PreciseYmdYearShardingTableAlgorithm implements PreciseShardingAlgorithm<String> {
+
     @Override
-    public String doSharding(final Collection<String> databaseNames, final PreciseShardingValue<String> shardingValue) {
-        String dbEnd = "_" + StringUtil.hashTableId(shardingValue.getValue(), databaseNames.size());
-        for (String each : databaseNames) {
-            if(each.endsWith(dbEnd)){
+    public String doSharding(final Collection<String> tableNames, final PreciseShardingValue<String> shardingValue) {
+        String dbEnd = "_" + shardingValue.getValue().replace("-", "").substring(0, 4);
+        for (String each : tableNames) {
+            if (each.endsWith(dbEnd)) {
                 return each;
             }
         }
@@ -37,3 +36,5 @@ public final class PreciseHashStringShardingDatabaseAlgorithm implements Precise
         return null;
     }
 }
+
+

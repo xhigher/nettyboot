@@ -15,19 +15,27 @@
  * limitations under the License.
  */
 
-package com.nettyboot.mysql_sharding.config;
+package com.nettyboot.mysql.sharding.config.algorithm;
 
-public enum ShardingType {
-    
-    SHARDING_DATABASES,
-    
-    SHARDING_TABLES,
-    
-    SHARDING_DATABASES_AND_TABLES,
-    
-    MASTER_SLAVE,
-    
-    SHARDING_MASTER_SLAVE,
-    
-    ENCRYPT
+import com.nettyboot.mysql.sharding.config.util.YmdUtil;
+import org.apache.shardingsphere.api.sharding.standard.PreciseShardingAlgorithm;
+import org.apache.shardingsphere.api.sharding.standard.PreciseShardingValue;
+
+import java.util.Collection;
+
+public final class PreciseYmdQuarterShardingTableAlgorithm implements PreciseShardingAlgorithm<String> {
+
+    @Override
+    public String doSharding(final Collection<String> tableNames, final PreciseShardingValue<String> shardingValue) {
+        String dbEnd = "_" + YmdUtil.getQuarter(shardingValue.getValue());
+        for (String each : tableNames) {
+            if (each.endsWith(dbEnd)) {
+                return each;
+            }
+        }
+
+        return null;
+    }
 }
+
+

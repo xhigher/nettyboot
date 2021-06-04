@@ -2,8 +2,8 @@ package com.nettyboot.mysql_sharding;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.nettyboot.mysql_sharding.config.ShardingType;
-import org.antlr.v4.runtime.atn.SemanticContext.AND;
+import com.nettyboot.mysql.sharding.ShardingType;
+import com.nettyboot.mysql.sharding.YamlDataSourceFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,8 +18,6 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Types;
-import java.util.List;
-import java.util.Properties;
 
 /**
  * [一句话描述该类的功能]

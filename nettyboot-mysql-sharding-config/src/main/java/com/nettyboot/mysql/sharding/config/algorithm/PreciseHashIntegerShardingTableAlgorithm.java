@@ -15,27 +15,26 @@
  * limitations under the License.
  */
 
-package com.nettyboot.shardingproxy.config.algorithm;
+package com.nettyboot.mysql.sharding.config.algorithm;
 
-import com.nettyboot.shardingproxy.config.util.YmdUtil;
+import com.nettyboot.mysql.sharding.config.util.ColumnValueUtil;
+import com.nettyboot.util.StringUtil;
 import org.apache.shardingsphere.api.sharding.standard.PreciseShardingAlgorithm;
 import org.apache.shardingsphere.api.sharding.standard.PreciseShardingValue;
 
 import java.util.Collection;
 
-public final class PreciseYmdQuarterShardingTableAlgorithm implements PreciseShardingAlgorithm<String> {
-
+public final class PreciseHashIntegerShardingTableAlgorithm implements PreciseShardingAlgorithm<Integer> {
+    
     @Override
-    public String doSharding(final Collection<String> tableNames, final PreciseShardingValue<String> shardingValue) {
-        String dbEnd = "_" + YmdUtil.getQuarter(shardingValue.getValue());
+    public String doSharding(final Collection<String> tableNames, final PreciseShardingValue<Integer> shardingValue) {
+        String dbEnd = "_" + StringUtil.hashTableId(ColumnValueUtil.getIntegerColumnLongValue(shardingValue), tableNames.size());
         for (String each : tableNames) {
             if (each.endsWith(dbEnd)) {
                 return each;
             }
         }
-
+//        throw new UnsupportedOperationException();
         return null;
     }
 }
-
-

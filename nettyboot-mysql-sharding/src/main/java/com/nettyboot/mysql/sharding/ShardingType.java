@@ -15,26 +15,19 @@
  * limitations under the License.
  */
 
-package com.nettyboot.shardingproxy.config.algorithm;
+package com.nettyboot.mysql.sharding;
 
-import org.apache.shardingsphere.api.sharding.standard.PreciseShardingAlgorithm;
-import org.apache.shardingsphere.api.sharding.standard.PreciseShardingValue;
-
-import java.util.Collection;
-
-public final class PreciseYmdMonthShardingTableAlgorithm implements PreciseShardingAlgorithm<String> {
-
-    @Override
-    public String doSharding(final Collection<String> tableNames, final PreciseShardingValue<String> shardingValue) {
-        String dbEnd = "_" + shardingValue.getValue().replace("-", "").substring(0, 6);
-        for (String each : tableNames) {
-            if (each.endsWith(dbEnd)) {
-                return each;
-            }
-        }
-//        throw new UnsupportedOperationException();
-        return null;
-    }
+public enum ShardingType {
+    
+    SHARDING_DATABASES,
+    
+    SHARDING_TABLES,
+    
+    SHARDING_DATABASES_AND_TABLES,
+    
+    MASTER_SLAVE,
+    
+    SHARDING_MASTER_SLAVE,
+    
+    ENCRYPT
 }
-
-

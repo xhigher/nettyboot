@@ -15,9 +15,8 @@
  * limitations under the License.
  */
 
-package com.nettyboot.mysql_sharding;
+package com.nettyboot.mysql.sharding;
 
-import com.nettyboot.mysql_sharding.config.ShardingType;
 import org.apache.shardingsphere.shardingjdbc.api.yaml.YamlMasterSlaveDataSourceFactory;
 import org.apache.shardingsphere.shardingjdbc.api.yaml.YamlShardingDataSourceFactory;
 

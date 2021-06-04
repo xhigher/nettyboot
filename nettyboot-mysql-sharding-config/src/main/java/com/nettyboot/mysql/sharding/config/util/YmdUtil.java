@@ -1,4 +1,4 @@
-package com.nettyboot.shardingproxy.config.util;
+package com.nettyboot.mysql.sharding.config.util;
 
 import com.google.common.collect.BoundType;
 import com.google.common.collect.Range;

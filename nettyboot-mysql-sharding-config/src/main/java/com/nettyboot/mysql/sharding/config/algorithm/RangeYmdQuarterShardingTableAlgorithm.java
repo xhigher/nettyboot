@@ -15,10 +15,10 @@
  * limitations under the License.
  */
 
-package com.nettyboot.shardingproxy.config.algorithm;
+package com.nettyboot.mysql.sharding.config.algorithm;
 
 import com.google.common.collect.Range;
-import com.nettyboot.shardingproxy.config.util.YmdUtil;
+import com.nettyboot.mysql.sharding.config.util.YmdUtil;
 import org.apache.shardingsphere.api.sharding.standard.RangeShardingAlgorithm;
 import org.apache.shardingsphere.api.sharding.standard.RangeShardingValue;
 
