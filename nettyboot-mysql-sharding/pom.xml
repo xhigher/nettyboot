@@ -5,7 +5,7 @@
     <parent>
         <groupId>com.nettyboot</groupId>
         <artifactId>nettyboot-framework</artifactId>
-        <version>1.0.2</version>
+        <version>1.0.3</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -14,21 +14,8 @@
 
     <dependencies>
         <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.zaxxer</groupId>
-            <artifactId>HikariCP</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.apache.shardingsphere</groupId>
             <artifactId>sharding-jdbc-core</artifactId>
-            <version>4.1.1</version>
-        </dependency>
-        <dependency>
-            <groupId>com.nettyboot</groupId>
-            <artifactId>nettyboot-util</artifactId>
         </dependency>
     </dependencies>
 
