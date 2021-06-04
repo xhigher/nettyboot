@@ -2,11 +2,11 @@ package com.nettyboot.logic;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.nettyboot.config.BaseDataKey;
 import com.nettyboot.config.ClientPeer;
 import com.nettyboot.config.ErrorCode;
 import com.nettyboot.config.LogicResultHelper;
 import com.nettyboot.config.RequestInfo;
+import com.nettyboot.logic.exception.NokException;
 import com.nettyboot.util.ClientUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -114,6 +114,11 @@ public abstract class BaseLogic implements Cloneable {
 
 	protected void beforeOutputResult(int code){
 
+	}
+
+	private String outputResult(NokException e){
+		this.beforeOutputResult(e.getErrcode());
+		return LogicResultHelper.staticOutput(e.getErrcode(), e.getErrinfo(), e.getErrinfo());
 	}
 
 	private String outputResult(int code, String info, Object obj){
@@ -229,6 +234,9 @@ public abstract class BaseLogic implements Cloneable {
 			this.afterExecute(result);
 
 			return result;
+		}catch(NokException e){
+			logger.error(this.getClass().getSimpleName(), e);
+			return outputResult(e);
 		}catch(Exception e){
 			logger.error(this.getClass().getSimpleName(), e);
 			return errorInternalResult();
