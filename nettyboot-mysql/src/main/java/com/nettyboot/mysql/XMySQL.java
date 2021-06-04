@@ -22,6 +22,7 @@ public class XMySQL {
 
 	private static boolean initStarted = false;
 	private static boolean initOK = false;
+	private static boolean mapUnderscoreToCamelCase = false;
 
 	public static void init(Properties properties) {
 		if(properties.containsKey("mysql.status") && 1==Integer.valueOf(properties.getProperty("mysql.status").trim())) {
@@ -41,6 +42,10 @@ public class XMySQL {
 				}
 			}
 			initOK = true;
+
+			if(properties.containsKey("mysql.config.map-underscore-to-camel-case") && 1 == Integer.parseInt(properties.getProperty("mysql.config.map-underscore-to-camel-case"))){
+				mapUnderscoreToCamelCase = true;
+			}
 		}
 	}
 
@@ -69,6 +74,10 @@ public class XMySQL {
 		} catch (SQLException e) {
 			logger.error("XMySQL.checkDataSource.SQLException:", e);
 		}
+	}
+
+	public static boolean isMapUnderscoreToCamelCase() {
+		return mapUnderscoreToCamelCase;
 	}
 
 	public static DataSource getDataSource(String dsName) {

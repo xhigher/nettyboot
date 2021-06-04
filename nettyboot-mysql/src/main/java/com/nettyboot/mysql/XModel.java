@@ -2,6 +2,10 @@ package com.nettyboot.mysql;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.PropertyNamingStrategy;
+import com.alibaba.fastjson.parser.ParserConfig;
+import com.alibaba.fastjson.util.TypeUtils;
+import com.nettyboot.config.BaseDataKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -92,6 +96,61 @@ public abstract class XModel {
         }
     }
 
+    private void getBeanResultPrepare(){
+        if(this.mException != null){
+            throw new RuntimeException(this.mException);
+        }
+    }
+
+    private static ParserConfig getParserConfig(){
+        ParserConfig parserConfig = new ParserConfig();
+        if(XMySQL.isMapUnderscoreToCamelCase()){
+            parserConfig.propertyNamingStrategy = PropertyNamingStrategy.SnakeCase;
+        }
+        return parserConfig;
+    }
+
+    private <T> List<T> transJSONArray2List(Class<T> clazz, JSONArray originalResult){
+        List<T> result = null;
+        if(originalResult != null){
+            result = new ArrayList<T>(originalResult.size());
+
+            ParserConfig config = getParserConfig();
+
+            for (Object item : originalResult) {
+                T classItem = (T) TypeUtils.cast(item, clazz, config);
+                result.add(classItem);
+            }
+        }
+        return result;
+    }
+
+    private <T> T transJSONObject2Obj(Class<T> clazz, JSONObject originalResult){
+        T result = null;
+        if(originalResult != null){
+            result = originalResult.toJavaObject(clazz, getParserConfig(), 0);
+        }
+        return result;
+    }
+
+    private <T> XPageData<T> transJSONObjectPage2ObjPage(Class<T> clazz, JSONObject originalResult){
+        XPageData<T> result = null;
+        if(originalResult != null){
+            result = new XPageData<>();
+
+            result.setTotal(originalResult.getIntValue("total"));
+            result.setPagenum(originalResult.getIntValue(BaseDataKey.pagenum));
+            result.setPagesize(originalResult.getIntValue(BaseDataKey.pagesize));
+            result.setData(transJSONArray2List(clazz, originalResult.getJSONArray(BaseDataKey.data)));
+        }
+        return result;
+    }
+
+    public <T> List<T> selectBySQL(Class<T> clazz, String sql, List<Object> data){
+        getBeanResultPrepare();
+        return transJSONArray2List(clazz, selectBySQL(sql, data));
+    }
+
     public JSONArray selectBySQL(String sql, List<Object> data) {
         Connection conn = this.getConnection();
         if (conn == null) {
@@ -110,11 +169,18 @@ public abstract class XModel {
             logger.info("selectBySQL: " + readOriginalSql(pstmt));
             return this.getJSONArray(rs);
         } catch (SQLException e) {
+            this.mException = e;
             logger.error("XModel.selectBySQL.SQLException:" + sql, e);
+            throw new RuntimeException(e);
         } finally {
             this.closeConnection(rs, pstmt, conn);
         }
-        return null;
+    }
+
+
+    public <T> List<T> selectBySQL(Class<T> clazz, String sql, Object... data){
+        getBeanResultPrepare();
+        return transJSONArray2List(clazz, selectBySQL(sql, data));
     }
 
     public JSONArray selectBySQL(String sql, Object... data) {
@@ -135,11 +201,12 @@ public abstract class XModel {
             rs = pstmt.executeQuery();
             return this.getJSONArray(rs);
         } catch (SQLException e) {
+            this.mException = e;
             logger.error("XModel.selectBySQL.SQLException: " + readOriginalSql(pstmt), e);
+            throw new RuntimeException(e);
         } finally {
             this.closeConnection(rs, pstmt, conn);
         }
-        return null;
     }
 
     public String readOriginalSql(PreparedStatement pstmt) {
@@ -161,6 +228,11 @@ public abstract class XModel {
         return "";
     }
 
+    public <T> List<T> selectBySQL(Class<T> clazz, String sql){
+        getBeanResultPrepare();
+        return transJSONArray2List(clazz, selectBySQL(sql));
+    }
+
     public JSONArray selectBySQL(String sql) {
         Connection conn = this.getConnection();
         if (conn == null) {
@@ -174,11 +246,17 @@ public abstract class XModel {
             logger.info("selectBySQL: " + readOriginalSql(pstmt));
             return this.getJSONArray(rs);
         } catch (SQLException e) {
+            this.mException = e;
             logger.error("XModel.selectBySQL.SQLException: " + sql, e);
+            throw new RuntimeException(e);
         } finally {
             this.closeConnection(rs, pstmt, conn);
         }
-        return null;
+    }
+
+    public <T> T findBySQL(Class<T> clazz, String sql, List<Object> data){
+        getBeanResultPrepare();
+        return transJSONObject2Obj(clazz, findBySQL(sql, data));
     }
 
     public JSONObject findBySQL(String sql, List<Object> data) {
@@ -199,11 +277,17 @@ public abstract class XModel {
             logger.info("findBySQL: " + readOriginalSql(pstmt));
             return this.getJSONObject(rs);
         } catch (SQLException e) {
+            this.mException = e;
             logger.error("XModel.findBySQL.SQLException: " + sql, e);
+            throw new RuntimeException(e);
         } finally {
             this.closeConnection(rs, pstmt, conn);
         }
-        return null;
+    }
+
+    public <T> T findBySQL(Class<T> clazz, String sql, Object... data){
+        getBeanResultPrepare();
+        return transJSONObject2Obj(clazz, findBySQL(sql, data));
     }
 
     public JSONObject findBySQL(String sql, Object... data) {
@@ -224,11 +308,17 @@ public abstract class XModel {
             logger.info("findBySQL: " + readOriginalSql(pstmt));
             return this.getJSONObject(rs);
         } catch (SQLException e) {
+            this.mException = e;
             logger.error("XModel.findBySQL.SQLException: " + sql, e);
+            throw new RuntimeException(e);
         } finally {
             this.closeConnection(rs, pstmt, conn);
         }
-        return null;
+    }
+
+    public <T> T findBySQL(Class<T> clazz, String sql){
+        getBeanResultPrepare();
+        return transJSONObject2Obj(clazz, findBySQL(sql));
     }
 
     public JSONObject findBySQL(String sql) {
@@ -244,11 +334,12 @@ public abstract class XModel {
             logger.info("findBySQL: " + readOriginalSql(pstmt));
             return this.getJSONObject(rs);
         } catch (SQLException e) {
+            this.mException = e;
             logger.error("XModel.findBySQL.SQLException: " + sql, e);
+            throw new RuntimeException(e);
         } finally {
             this.closeConnection(rs, pstmt, conn);
         }
-        return null;
     }
 
     public boolean executeByDDLSQL(String sql) {
@@ -264,10 +355,10 @@ public abstract class XModel {
         } catch (SQLException e) {
             this.mException = e;
             logger.error("XModel.executeByDDLSQL.SQLException: " + sql, e);
+            throw new RuntimeException(e);
         } finally {
             this.closeConnection(null, pstmt, conn);
         }
-        return false;
     }
 
     public boolean executeBySQL(String sql, List<Object> data) {
@@ -288,10 +379,10 @@ public abstract class XModel {
         } catch (SQLException e) {
             this.mException = e;
             logger.error("XModel.executeBySQL.SQLException: " + sql, e);
+            throw new RuntimeException(e);
         } finally {
             this.closeConnection(null, pstmt, conn);
         }
-        return false;
     }
 
     public boolean executeBySQL(String sql, Object... data) {
@@ -312,10 +403,10 @@ public abstract class XModel {
         } catch (SQLException e) {
             this.mException = e;
             logger.error("XModel.executeBySQL.SQLException: " + sql, e);
+            throw new RuntimeException(e);
         } finally {
             this.closeConnection(null, pstmt, conn);
         }
-        return false;
     }
 
     public boolean executeBatchBySQL(String sql, List<List<Object>> data) {
@@ -351,10 +442,15 @@ public abstract class XModel {
             }
             this.mException = e;
             logger.error("XModel.executeBatchBySQL.SQLException: " + sql, e);
+            throw new RuntimeException(e);
         } finally {
             this.closeConnection(null, pstmt, conn);
         }
-        return false;
+    }
+
+    public <T> T find(Class<T> clazz){
+        getBeanResultPrepare();
+        return transJSONObject2Obj(clazz, find());
     }
 
     public JSONObject find() {
@@ -374,14 +470,24 @@ public abstract class XModel {
         } catch (SQLException e) {
             this.mException = e;
             logger.error("XModel.find.SQLException: " + mStatementSQL, e);
+            throw new RuntimeException(e);
         } finally {
             this.closeConnection(rs, pstmt, conn);
         }
-        return null;
+    }
+
+    public <T> List<T> select(Class<T> clazz){
+        getBeanResultPrepare();
+        return transJSONArray2List(clazz, select());
     }
 
     public JSONArray select() {
         return this.select(false);
+    }
+
+    public <T> List<T> select(Class<T> clazz, boolean single){
+        getBeanResultPrepare();
+        return transJSONArray2List(clazz, select(single));
     }
 
     public JSONArray select(boolean single) {
@@ -401,14 +507,25 @@ public abstract class XModel {
         } catch (SQLException e) {
             this.mException = e;
             logger.error("XModel.select.SQLException: " + readOriginalSql(pstmt), e);
+            throw new RuntimeException(e);
         } finally {
             this.closeConnection(rs, pstmt, conn);
         }
-        return null;
+    }
+
+    public <T> XPageData<T> page(Class<T> clazz, int pagenum, int pagesize){
+        getBeanResultPrepare();
+        return transJSONObjectPage2ObjPage(clazz, page(pagenum, pagesize));
     }
 
     public JSONObject page(int pagenum, int pagesize) {
         return page(pagenum, pagesize, false);
+    }
+
+
+    public <T> XPageData<T> page(Class<T> clazz, int pagenum, int pagesize, boolean single){
+        getBeanResultPrepare();
+        return transJSONObjectPage2ObjPage(clazz, page(pagenum, pagesize, single));
     }
 
     public JSONObject page(int pagenum, int pagesize, boolean single) {
@@ -449,11 +566,12 @@ public abstract class XModel {
             pageData.put("data", data);
             return pageData;
         } catch (SQLException e) {
+            this.mException = e;
             logger.error("XModel.page.SQLException: " + mStatementSQL, e);
+            throw new RuntimeException(e);
         } finally {
             this.closeConnection(rs, pstmt, conn);
         }
-        return null;
     }
 
     public int count() {
@@ -471,11 +589,12 @@ public abstract class XModel {
             JSONObject json = this.getJSONObject(rs);
             return json.getIntValue("total");
         } catch (SQLException e) {
+            this.mException = e;
             logger.error("XModel.select.SQLException: " + mStatementSQL, e);
+            throw new RuntimeException(e);
         } finally {
             this.closeConnection(rs, pstmt, conn);
         }
-        return 0;
     }
 
     public boolean update() {
@@ -494,10 +613,10 @@ public abstract class XModel {
         } catch (SQLException e) {
             this.mException = e;
             logger.error("XModel.update.SQLException: " + mStatementSQL, e);
+            throw new RuntimeException(e);
         } finally {
             this.closeConnection(null, pstmt, conn);
         }
-        return false;
     }
 
     public boolean delete() {
@@ -515,10 +634,10 @@ public abstract class XModel {
         } catch (SQLException e) {
             this.mException = e;
             logger.error("XModel.delete.SQLException: " + mStatementSQL, e);
+            throw new RuntimeException(e);
         } finally {
             this.closeConnection(null, pstmt, conn);
         }
-        return false;
     }
 
     public boolean insert() {
@@ -541,10 +660,10 @@ public abstract class XModel {
         } catch (SQLException e) {
             this.mException = e;
             logger.error("XModel.insert.SQLException: " + readOriginalSql(pstmt), e);
+            throw new RuntimeException(e);
         } finally {
             this.closeConnection(null, pstmt, conn);
         }
-        return false;
     }
 
     public long lastInsertId() {
@@ -563,6 +682,7 @@ public abstract class XModel {
             } catch (SQLException e) {
                 this.mException = e;
                 logger.error("XModel.lastInsertId.SQLException", e);
+                throw new RuntimeException(e);
             } finally {
                 this.closeConnection(null, pstmt, conn);
             }
@@ -590,10 +710,10 @@ public abstract class XModel {
         } catch (SQLException e) {
             this.mException = e;
             logger.error("XModel.replace.SQLException: " + mStatementSQL, e);
+            throw new RuntimeException(e);
         } finally {
             this.closeConnection(null, pstmt, conn);
         }
-        return false;
     }
 
     public boolean insertUpdate() {
@@ -617,10 +737,10 @@ public abstract class XModel {
         } catch (SQLException e) {
             this.mException = e;
             logger.error("XModel.insertUpdate.SQLException: " + readOriginalSql(pstmt), e);
+            throw new RuntimeException(e);
         } finally {
             this.closeConnection(null, pstmt, conn);
         }
-        return false;
     }
 
     public boolean insertNotExists() {
@@ -644,10 +764,10 @@ public abstract class XModel {
         } catch (SQLException e) {
             this.mException = e;
             logger.error("XModel.insertUpdate.SQLException: " + readOriginalSql(pstmt), e);
+            throw new RuntimeException(e);
         } finally {
             this.closeConnection(null, pstmt, conn);
         }
-        return false;
     }
 
     public boolean insertBatch() {
@@ -687,10 +807,10 @@ public abstract class XModel {
             }
             this.mException = e;
             logger.error("XModel.insertBatch.SQLException: " + mStatementSQL, e);
+            throw new RuntimeException(e);
         } finally {
             this.closeConnection(null, pstmt, conn);
         }
-        return false;
     }
 
     public boolean insertUpdateBatch() {
@@ -730,10 +850,10 @@ public abstract class XModel {
             }
             this.mException = e;
             logger.error("XModel.insertUpdateBatch.SQLException: " + mStatementSQL, e);
+            throw new RuntimeException(e);
         } finally {
             this.closeConnection(null, pstmt, conn);
         }
-        return false;
     }
 
     protected void setStatementParams(PreparedStatement pstmt) throws SQLException {
@@ -1157,9 +1277,52 @@ public abstract class XModel {
         return this;
     }
 
+    public <T> XModel setBeanValue(T data) {
+        Field[] declaredFields = data.getClass().getDeclaredFields();
+        for(Field declaredField : declaredFields){
+            try {
+                declaredField.setAccessible(true);
+
+                String key = declaredField.getName();
+                Object value = declaredField.get(data);
+                if(value != null){
+                    mValues.add(new ClauseValue(key, value));
+                }
+            } catch (IllegalAccessException e) {
+
+            }
+        }
+        return this;
+    }
+
     public XModel set(Map<String, Object> data) {
         for (String key : data.keySet()) {
             mValues.add(new ClauseValue(key.trim(), data.get(key)));
+        }
+        return this;
+    }
+
+    public <T> XModel setBeanValues(List<T> data) {
+        T row = null;
+        List<ClauseValue> tempValues = null;
+        Field[] declaredFields = data.get(0).getClass().getDeclaredFields();
+        for (int i = 0, n = data.size(); i < n; i++) {
+            row = data.get(i);
+            tempValues = new ArrayList<ClauseValue>();
+            for(Field declaredField : declaredFields){
+                try {
+                    declaredField.setAccessible(true);
+
+                    String key = declaredField.getName();
+                    Object value = declaredField.get(row);
+                    if(value != null){
+                        tempValues.add(new ClauseValue(key, value));
+                    }
+                } catch (IllegalAccessException e) {
+
+                }
+            }
+            mBatchValues.add(tempValues);
         }
         return this;
     }
@@ -1209,6 +1372,24 @@ public abstract class XModel {
 
     public XModel addWhere(List<ClauseWhere> wheres) {
         mWheres.addAll(wheres);
+        return this;
+    }
+
+    public <T> XModel addBeanWhere(T data) {
+        Field[] declaredFields = data.getClass().getDeclaredFields();
+        for(Field declaredField : declaredFields){
+            try {
+                declaredField.setAccessible(true);
+
+                String key = declaredField.getName();
+                Object value = declaredField.get(data);
+                if(value != null){
+                    mWheres.add(new ClauseWhere(key, value));
+                }
+            } catch (IllegalAccessException e) {
+
+            }
+        }
         return this;
     }
 
@@ -1439,6 +1620,10 @@ public abstract class XModel {
         public String getKey() {
             return "`" + this.key + "`";
         }
+    }
+
+    public boolean isError() {
+        return this.mException != null;
     }
 
     public boolean isErrorDuplicateEntry() {

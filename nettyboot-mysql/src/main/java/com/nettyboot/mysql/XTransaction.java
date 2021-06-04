@@ -12,7 +12,7 @@ import java.sql.SQLException;
  */
 public class XTransaction extends XBaseTransaction<Connection> {
 
-	private static final Logger logger = LoggerFactory.getLogger(XModel.class);
+	private static final Logger logger = LoggerFactory.getLogger(XTransaction.class);
 	
 	private Connection connnection;
 	
