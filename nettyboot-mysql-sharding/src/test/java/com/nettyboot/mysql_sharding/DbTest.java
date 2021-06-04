@@ -3,7 +3,6 @@ package com.nettyboot.mysql_sharding;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.nettyboot.mysql_sharding.config.ShardingType;
-import com.nettyboot.util.FileUtil;
 import org.antlr.v4.runtime.atn.SemanticContext.AND;
 import org.junit.After;
 import org.junit.Before;
