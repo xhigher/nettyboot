@@ -1,6 +1,7 @@
 package com.nettyboot.config;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 
 /*
  * @copyright (c) xhigher 2015 
@@ -38,7 +39,7 @@ public class LogicResult {
 
 	@Override
 	public String toString(){
-		return JSON.toJSONString(this);
+		return JSON.toJSONString(this, SerializerFeature.DisableCircularReferenceDetect);
 	}
 
 }
