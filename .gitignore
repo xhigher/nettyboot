@@ -1,5 +1,7 @@
 !/nettyboot-*/src
 /nettyboot-*/target/
+logs
 
 .idea
 *.iml
+*.bak
