@@ -187,27 +187,27 @@ public abstract class BaseLogic implements Cloneable {
 		return outputResult(ErrorCode.NOK, null, null);
 	}
 
-	protected boolean requireSession(){
+	protected boolean requireSession() throws NokException{
 		return true;
 	}
 
-	protected boolean requireAccountBound(){
+	protected boolean requireAccountBound() throws NokException{
 		return false;
 	}
 
-	protected abstract String prepare();
+	protected abstract String prepare() throws NokException;
 
-	protected abstract String execute();
+	protected abstract String execute() throws NokException;
 
-	protected void beforeExecute(){
-
-	}
-
-	protected void afterExecute(String result){
+	protected void beforeExecute() throws NokException{
 
 	}
 
-	protected String checkSession(){
+	protected void afterExecute(String result) throws NokException{
+
+	}
+
+	protected String checkSession() throws NokException{
 		return null;
 	}
 
