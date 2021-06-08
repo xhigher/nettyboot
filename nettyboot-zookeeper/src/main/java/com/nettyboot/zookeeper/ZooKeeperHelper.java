@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 public class ZooKeeperHelper {
 
@@ -19,7 +20,6 @@ public class ZooKeeperHelper {
     private final String product;
     private final String business;
     private final String servers;
-    private final CountDownLatch connectLatch;
     private int type = 0;
 
     private ZooKeeper zookeeper;
@@ -34,7 +34,6 @@ public class ZooKeeperHelper {
         this.product = product;
         this.business = business;
         this.servers = servers;
-        this.connectLatch = new CountDownLatch(1);
     }
 
     public void initPublisher(String host, int port, String configData){
@@ -63,20 +62,24 @@ public class ZooKeeperHelper {
     }
 
     private ZooKeeper connectToZooKeeper() {
-        ZooKeeper zookeeper = null;
+        ZooKeeper newZookeeper = null;
         try {
-            zookeeper = new ZooKeeper(this.servers, SESSION_TIMEOUT, new Watcher() {
+            CountDownLatch connectLatch = new CountDownLatch(1);
+            newZookeeper = new ZooKeeper(this.servers, SESSION_TIMEOUT, new Watcher() {
+                @Override
                 public void process(WatchedEvent event) {
                     if (event.getState() == Event.KeeperState.SyncConnected) {
                         connectLatch.countDown();
+                    }else if(event.getState() == Event.KeeperState.Expired){
+                        zookeeper = connectToZooKeeper();
                     }
                 }
             });
-            connectLatch.await();
+            connectLatch.await(SESSION_TIMEOUT, TimeUnit.SECONDS);
         } catch (Exception e) {
             logger.error("connectToZooKeeper.Exception", e);
         }
-        return zookeeper;
+        return newZookeeper;
     }
 
     public void close(){
@@ -143,6 +146,7 @@ public class ZooKeeperHelper {
             }
 
             List<String> nodeHostPortList = zookeeper.getChildren(nodePath, new Watcher() {
+                @Override
                 public void process(WatchedEvent event) {
                     EventType type = event.getType();
                     if (type == EventType.NodeCreated || type == EventType.NodeCreated ||
