@@ -14,7 +14,7 @@ public class BiznodeHandlerContext extends HandlerContext {
 	public void handleMessage(ChannelHandlerContext context, SimpleMessage message) {
 		SimpleMessage response = new SimpleMessage(MessageType.response, message.getMsgid());
 		response.setData(XLogicManager.executeLogic(convertToRequestInfo(message)));
-		context.writeAndFlush(message);
+		context.writeAndFlush(response);
 	}
 
 	public RequestInfo convertToRequestInfo(SimpleMessage message) {
