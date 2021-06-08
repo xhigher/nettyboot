@@ -8,10 +8,15 @@ import com.nettyboot.zookeeper.ZooKeeperHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class ServiceManager {
@@ -23,14 +28,20 @@ public class ServiceManager {
     protected static final ConcurrentHashMap<String, LogicConfig> logicConfigs = new ConcurrentHashMap<String, LogicConfig>();
     protected static final ConcurrentHashMap<String, CopyOnWriteArrayList<SimpleClient>> logicServers = new ConcurrentHashMap<String, CopyOnWriteArrayList<SimpleClient>>();
 
-    private static boolean clearClosedClientLocked = false;
+    private static volatile boolean clearClosedClientLocked = false;
+    private static final Object updateLogicLocked = new Object();
 
     private static boolean initOK = false;
+
+    private static final long checkEmptyLogicDelay = 5 * 60;
+    private static final ScheduledExecutorService checkEmptyLogicScheduledService = Executors.newSingleThreadScheduledExecutor();
 
     protected static void init(Properties properties){
         if(!initOK){
 
             initZooKeeper(properties);
+
+            checkEmptyLogicScheduledService.scheduleWithFixedDelay(new CheckEmptyLogicServersTask(), checkEmptyLogicDelay, checkEmptyLogicDelay, TimeUnit.SECONDS);
 
             initOK = true;
         }
@@ -45,14 +56,17 @@ public class ServiceManager {
         zookeeperHelper.initSubscriber(new ZooKeeperHelper.WatchNodeHandler() {
             @Override
             public void update(List<String> data) {
+                logger.info("zookeeperHelper.subscriber.update.data: {}", data);
                 ServiceUpdater.build().updateAllNodeConfigs(data);
             }
         });
     }
 
-    private static void clearConfig(){
-        logicConfigs.clear();
-        logicServers.clear();
+    protected static void clearConfig(){
+        synchronized (updateLogicLocked) {
+            logicConfigs.clear();
+            logicServers.clear();
+        }
     }
 
     private static void clearClosedClient(){
@@ -126,7 +140,7 @@ public class ServiceManager {
                     }
                 }
                 if (closedNum > 0) {
-                    clearClosedClient();
+                    cleanLogicServerClients(logicIdentifier);
                 }
             }
         }
@@ -134,26 +148,89 @@ public class ServiceManager {
     }
 
     protected static void updateLogics(JSONObject configData, SimpleClient client){
-        if(configData != null){
-            JSONArray logicList = configData.getJSONArray("logics");
-            LogicConfig logicConfig = null;
-            String logicIdentifier = null;
-            for(int i=0,n=logicList.size(); i<n; i++){
-                logicConfig = logicList.getObject(i, LogicConfig.class);
-                logicIdentifier = ServiceManager.getLogicIdentifier(logicConfig);
-                logicConfigs.put(logicIdentifier, logicConfig);
+        synchronized (updateLogicLocked){
+            if(configData != null){
+                JSONArray logicList = configData.getJSONArray("logics");
+                LogicConfig logicConfig = null;
+                String logicIdentifier = null;
+                for(int i=0,n=logicList.size(); i<n; i++){
+                    logicConfig = logicList.getObject(i, LogicConfig.class);
+                    logicIdentifier = ServiceManager.getLogicIdentifier(logicConfig);
+                    logicConfigs.put(logicIdentifier, logicConfig);
 
-                if(!logicServers.containsKey(logicIdentifier)){
-                    logicServers.put(logicIdentifier, new CopyOnWriteArrayList<SimpleClient>());
+                    cleanAndAddLogicServerClients(logicIdentifier, client);
+                    logger.debug("updateLogics: logicIdentifier="+logicIdentifier+", client="+client);
                 }
-                logicServers.get(logicIdentifier).add(client);
-                logger.debug("updateLogics: logicIdentifier="+logicIdentifier+", client="+client);
             }
         }
     }
 
+    protected static void cleanLogicServerClients(String logicIdentifier){
+        cleanAndAddLogicServerClients(logicIdentifier, null);
+    }
+
+    protected static void cleanAndAddLogicServerClients(String logicIdentifier, SimpleClient newClient){
+        logicServers.compute(logicIdentifier, (key, clients) ->{
+            if(clients == null){
+                clients = new CopyOnWriteArrayList<SimpleClient>();
+            }else{
+                SimpleClient client = null;
+                CopyOnWriteArrayList<SimpleClient> activeClients = new CopyOnWriteArrayList<SimpleClient>();
+                for(int i=0; i<clients.size(); i++){
+                    client = clients.get(i);
+                    if(!client.isClosed()){
+                        activeClients.add(client);
+                    }
+                }
+                clients = activeClients;
+            }
+            if(newClient != null){
+                clients.add(newClient);
+            }
+
+            return clients;
+        });
+    }
+
+
+    private static class CheckEmptyLogicServersTask implements Runnable{
+
+        @Override
+        public void run() {
+            synchronized (updateLogicLocked) {
+                Iterator<Entry<String, CopyOnWriteArrayList<SimpleClient>>> iterator = logicServers.entrySet().iterator();
+                while (iterator.hasNext()) {
+                    Entry<String, CopyOnWriteArrayList<SimpleClient>> next = iterator.next();
+                    String key = next.getKey();
+                    CopyOnWriteArrayList<SimpleClient> clients = next.getValue();
+
+                    if (clients.isEmpty() || allClientsIsClosed(clients)) {
+                        logicConfigs.remove(key);
+                        iterator.remove();
+
+                        logger.error("CheckEmptyLogicServersTask.remove.key: {}", key);
+                    }
+                }
+            }
+        }
+
+        private boolean allClientsIsClosed(CopyOnWriteArrayList<SimpleClient> clients){
+            boolean allClientsIsClosedFlag = true;
+            for (SimpleClient client : clients) {
+                if (!client.isClosed()) {
+                    allClientsIsClosedFlag = false;
+                    break;
+                }
+            }
+            return allClientsIsClosedFlag;
+        }
+    }
+
+
     public static void release() {
         clearConfig();
+        zookeeperHelper.close();
+        checkEmptyLogicScheduledService.shutdownNow();
     }
 
 }
