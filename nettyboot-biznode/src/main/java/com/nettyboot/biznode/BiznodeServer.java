@@ -15,4 +15,10 @@ public class BiznodeServer extends SimpleServer {
         XLogicManager.init(properties);
     }
 
+    @Override
+    public void stop() {
+        super.stop();
+
+        XLogicManager.release();
+    }
 }

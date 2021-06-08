@@ -33,7 +33,7 @@ public class XLogicManager {
     	port = Integer.parseInt(properties.getProperty("server.port").trim());
 		zookeeperServers = properties.getProperty("zookeeper.servers").trim();
 
-		LogicManager.init(properties.getProperty("service.package").trim());
+		LogicManager.init(properties.getProperty("logic.package").trim());
 
 		initZooKeeper();
 
@@ -75,6 +75,7 @@ public class XLogicManager {
 		configData.put("business", business);
 		configData.put("host", host);
 		configData.put("port", port);
+		configData.put("timestamp", System.currentTimeMillis());
 		configData.put("logics", LogicManager.getLogicConfigList());
 		logger.info("getConfigData: {}", configData.toJSONString());
 		return configData.toJSONString();
@@ -83,5 +84,9 @@ public class XLogicManager {
 	private static void initZooKeeper(){
 		zookeeperHelper = new ZooKeeperHelper(product, business, zookeeperServers);
 		zookeeperHelper.initPublisher(host, port, getConfigData());
+	}
+
+	public static void release(){
+		zookeeperHelper.close();
 	}
 }
