@@ -61,7 +61,7 @@ public class ServiceUpdater {
         }
     }
 
-    protected void updateAllNodeConfigs(List<String> allNodeConfigs) {
+    protected synchronized void updateAllNodeConfigs(List<String> allNodeConfigs) {
         if (allNodeConfigs != null) {
             if (allNodeConfigs.size() > 0) {
                 //update local serverNodes cache
@@ -119,6 +119,7 @@ public class ServiceUpdater {
                     }
                 }
                 serviceNodeClients.clear();
+                ServiceManager.clearConfig();
             }
         }
     }
