@@ -39,7 +39,16 @@ public class LogicResult {
 
 	@Override
 	public String toString(){
-		return JSON.toJSONString(this, SerializerFeature.DisableCircularReferenceDetect);
+		return JSON.toJSONString(this,
+				SerializerFeature.DisableCircularReferenceDetect,
+				SerializerFeature.WriteNullStringAsEmpty,
+				SerializerFeature.WriteNullNumberAsZero,
+				SerializerFeature.WriteNullListAsEmpty,
+				SerializerFeature.WriteNullBooleanAsFalse,
+				SerializerFeature.WriteEnumUsingName,
+				SerializerFeature.SkipTransientField,
+				SerializerFeature.WriteMapNullValue
+		);
 	}
 
 }
