@@ -235,7 +235,7 @@ public abstract class BaseLogic implements Cloneable {
 
 			return result;
 		}catch(NokException e){
-			logger.error(this.getClass().getSimpleName(), e);
+			logger.warn("NokException.class:{}, errcode:{}, errinfo: {}", this.getClass().getSimpleName(), e.getErrcode(), e.getErrinfo());
 			return outputResult(e);
 		}catch(Exception e){
 			logger.error(this.getClass().getSimpleName(), e);
