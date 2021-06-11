@@ -127,7 +127,7 @@ public abstract class XModel {
 
     private <T> T transJSONObject2Obj(Class<T> clazz, JSONObject originalResult){
         T result = null;
-        if(originalResult != null){
+        if(originalResult != null && !originalResult.isEmpty()){
             result = originalResult.toJavaObject(clazz, getParserConfig(), 0);
         }
         return result;
