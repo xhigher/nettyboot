@@ -19,6 +19,12 @@ import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.aggregations.Aggregation;
+import org.elasticsearch.search.aggregations.AggregationBuilders;
+import org.elasticsearch.search.aggregations.Aggregations;
+import org.elasticsearch.search.aggregations.bucket.terms.ParsedLongTerms;
+import org.elasticsearch.search.aggregations.metrics.ParsedSum;
+import org.elasticsearch.search.aggregations.metrics.Sum;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.sort.SortOrder;
 import org.slf4j.Logger;
@@ -203,6 +209,90 @@ public abstract class XSearchModel {
 			pageList.put("pagenum", pagenum);
 			pageList.put("pagesize", pagesize);
 			pageList.put("data", resutlData == null ? new JSONArray(0) : resutlData);
+			return pageList;
+		}catch(Exception e) {
+			logger.error("search.Exception", e);
+		}
+		return null;
+	}
+
+	protected JSONObject searchPageList(BoolQueryBuilder boolBuilder, String[] resultFields, String[] sumFields, String[] groupFields, String orderName, SortOrder orderType, int pagenum, int pagesize, boolean onlyId) {
+		try {
+			int fromIndex = (pagenum >=1 ? pagenum-1 : pagenum) * pagesize;
+			SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
+			sourceBuilder.query(boolBuilder);
+			sourceBuilder.from(fromIndex);
+			sourceBuilder.size(pagesize);
+			if(orderName != null) {
+				sourceBuilder.sort(orderName, orderType==null?SortOrder.ASC:orderType);
+			}
+			sourceBuilder.fetchSource(resultFields, null);
+
+			if(sumFields != null && sumFields.length > 0){
+				for (int i = 0; i < sumFields.length; i++) {
+					sourceBuilder.aggregation(AggregationBuilders.sum("sum_" + sumFields[i]).field(sumFields[i]));
+				}
+			}
+			if(groupFields != null && groupFields.length > 0){
+				for (int i = 0; i < groupFields.length; i++) {
+					sourceBuilder.aggregation(AggregationBuilders.terms("terms_" + groupFields[i]).field(groupFields[i]));
+				}
+			}
+
+			SearchRequest searchRequest = new SearchRequest(this.getIndexName());
+			searchRequest.source(sourceBuilder);
+
+			logger.info("searchPageList: " + searchRequest.toString());
+			SearchResponse response = XElasticSearch.getClient().search(searchRequest, RequestOptions.DEFAULT);
+			long total = 0;
+			JSONArray resutlData = null;
+			JSONObject sumData = null;
+			JSONObject groupData = null;
+			if(response != null) {
+				logger.info("searchPageList: " + JSON.toJSONString(response));
+				resutlData = new JSONArray();
+				SearchHit[] searchHits = response.getHits().getHits();
+				if(searchHits.length > 0) {
+					for(int i=0; i<searchHits.length; i++) {
+						if(onlyId) {
+							resutlData.add(searchHits[i].getId());
+						}else {
+							resutlData.add(new JSONObject(searchHits[i].getSourceAsMap()));
+						}
+					}
+				}
+				total = response.getHits().getTotalHits().value;
+
+				Aggregations aggregations = response.getAggregations();
+				if(sumFields != null && sumFields.length > 0) {
+					sumData = new JSONObject();
+					for (int i = 0; i < sumFields.length; i++) {
+						sumData.put(sumFields[i], ((ParsedSum)aggregations.get("sum_" + sumFields[i])).getValue());
+					}
+				}
+				if(groupFields != null && groupFields.length > 0){
+					groupData = new JSONObject();
+					for (int i = 0; i < groupFields.length; i++) {
+						JSONArray aggregationsGroupList = new JSONArray();
+						ParsedLongTerms groupInfo = aggregations.get("terms_" + groupFields[i]);
+						groupInfo.getBuckets().forEach(item -> {
+							JSONObject aggregationsGroupItem = new JSONObject();
+							aggregationsGroupItem.put("key", item.getKey());
+							aggregationsGroupItem.put("total", item.getDocCount());
+							aggregationsGroupList.add(aggregationsGroupItem);
+						});
+						groupData.put(groupFields[i], aggregationsGroupList);
+					}
+				}
+			}
+
+			JSONObject pageList = new JSONObject();
+			pageList.put("total", total);
+			pageList.put("pagenum", pagenum);
+			pageList.put("pagesize", pagesize);
+			pageList.put("data", resutlData == null ? new JSONArray(0) : resutlData);
+			pageList.put("sum", sumData == null ? new JSONObject(0) : sumData);
+			pageList.put("group", groupData == null ? new JSONObject(0) : groupData);
 			return pageList;
 		}catch(Exception e) {
 			logger.error("search.Exception", e);
