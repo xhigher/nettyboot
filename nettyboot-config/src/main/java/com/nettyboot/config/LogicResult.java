@@ -47,7 +47,8 @@ public class LogicResult {
 				SerializerFeature.WriteNullBooleanAsFalse,
 				SerializerFeature.WriteEnumUsingName,
 				SerializerFeature.SkipTransientField,
-				SerializerFeature.WriteMapNullValue
+				SerializerFeature.WriteMapNullValue,
+				SerializerFeature.WriteDateUseDateFormat
 		);
 	}
 
