@@ -2,9 +2,26 @@ package com.nettyboot.redis;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import redis.clients.jedis.*;
+import redis.clients.jedis.HostAndPort;
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisCluster;
+import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.JedisPoolAbstract;
+import redis.clients.jedis.JedisPoolConfig;
+import redis.clients.jedis.JedisPubSub;
+import redis.clients.jedis.JedisSentinelPool;
+import redis.clients.jedis.Protocol;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 
 /*
  * @copyright (c) xhigher 2015 
@@ -18,7 +35,7 @@ public class XRedis {
 
 	private static final String CHANNEL_PREFIX = "channel_";
 	
-	private final static Map<String,JedisPool> redisPoolNodeList = new HashMap<>();
+	private final static Map<String,JedisPoolAbstract> redisPoolNodeList = new HashMap<>();
 
 	private static JedisCluster redisCluster = null;
 
@@ -58,14 +75,20 @@ public class XRedis {
 				int nodeSize = Integer.parseInt(properties.getProperty("redis.node.size").trim());
 				for (int id = 1; id <= nodeSize; id++) {
 					name = properties.getProperty("redis.node"+id+".name").trim();
-					host = properties.getProperty("redis.node"+id+".host").trim();
-					port = Integer.valueOf(properties.getProperty("redis.node"+id+".port").trim());
-					pass = properties.getProperty("redis.node"+id+".pass").trim();
-					db = 0;
-					if(properties.containsKey("redis.node"+id+".db")) {
-						db = Integer.parseInt(properties.getProperty("redis.node"+id+".db").trim());
+
+					if(properties.containsKey("redis.node"+id+".sentinel.status") && 1==Integer.parseInt(properties.getProperty("redis.node"+id+".sentinel.status").trim())){
+						JedisSentinelPool jedisSentinelPool = getJedisSentinelPool(properties, id, poolConfig);
+						redisPoolNodeList.put(name, jedisSentinelPool);
+					}else{
+						host = properties.getProperty("redis.node"+id+".host").trim();
+						port = Integer.valueOf(properties.getProperty("redis.node"+id+".port").trim());
+						pass = properties.getProperty("redis.node"+id+".pass").trim();
+						db = 0;
+						if(properties.containsKey("redis.node"+id+".db")) {
+							db = Integer.parseInt(properties.getProperty("redis.node"+id+".db").trim());
+						}
+						redisPoolNodeList.put(name, new JedisPool(poolConfig, host, port, Protocol.DEFAULT_TIMEOUT, pass, db));
 					}
-					redisPoolNodeList.put(name, new JedisPool(poolConfig, host, port, Protocol.DEFAULT_TIMEOUT, pass, db));
 				}
 			}
 
@@ -74,9 +97,22 @@ public class XRedis {
 		}
 	}
 
+	private static JedisSentinelPool getJedisSentinelPool(Properties properties, int noteIndex, JedisPoolConfig poolConfig){
+		String name = properties.getProperty("redis.node" + noteIndex + ".sentinel.name").trim();
+		String sentinelsHostAndPorts = properties.getProperty("redis.node" + noteIndex + ".sentinel.hosts").trim();
+		Set<String> sentinels = new HashSet<>(Arrays.asList(sentinelsHostAndPorts.split(",")));
+		String pass = properties.getProperty("redis.node"+noteIndex+".pass").trim();
+		int db = 0;
+		if(properties.containsKey("redis.node"+noteIndex+".db")) {
+			db = Integer.parseInt(properties.getProperty("redis.node"+noteIndex+".db").trim());
+		}
+
+		return new JedisSentinelPool(name, sentinels, poolConfig, Protocol.DEFAULT_TIMEOUT, pass, db);
+	}
+
 	private synchronized static Jedis getResource(String name) {
 		Jedis jedis = null;
-		JedisPool jedisPool = redisPoolNodeList.get(name);
+		JedisPoolAbstract jedisPool = redisPoolNodeList.get(name);
 		if (jedisPool != null) {
 			try{
 				jedis = jedisPool.getResource();
@@ -88,7 +124,7 @@ public class XRedis {
 	}
 
 	public static void close() {
-		for (JedisPool jedisPool : redisPoolNodeList.values()) {
+		for (JedisPoolAbstract jedisPool : redisPoolNodeList.values()) {
 			jedisPool.close();
 		}
 		if(redisCluster != null){
