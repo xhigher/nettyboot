@@ -267,20 +267,27 @@ public abstract class XSearchModel {
 				if(sumFields != null && sumFields.length > 0) {
 					sumData = new JSONObject();
 					for (int i = 0; i < sumFields.length; i++) {
-						sumData.put(sumFields[i], ((ParsedSum)aggregations.get("sum_" + sumFields[i])).getValue());
+						double fieldSum = 0D;
+						Aggregation sumInfo = aggregations.get("sum_" + sumFields[i]);
+						if(sumInfo instanceof ParsedSum){
+							fieldSum = ((ParsedSum)sumInfo).getValue();
+						}
+						sumData.put(sumFields[i], fieldSum);
 					}
 				}
 				if(groupFields != null && groupFields.length > 0){
 					groupData = new JSONObject();
 					for (int i = 0; i < groupFields.length; i++) {
 						JSONArray aggregationsGroupList = new JSONArray();
-						ParsedLongTerms groupInfo = aggregations.get("terms_" + groupFields[i]);
-						groupInfo.getBuckets().forEach(item -> {
-							JSONObject aggregationsGroupItem = new JSONObject();
-							aggregationsGroupItem.put("key", item.getKey());
-							aggregationsGroupItem.put("total", item.getDocCount());
-							aggregationsGroupList.add(aggregationsGroupItem);
-						});
+						Aggregation groupInfo = aggregations.get("terms_" + groupFields[i]);
+						if(groupInfo instanceof ParsedLongTerms){
+							((ParsedLongTerms)groupInfo).getBuckets().forEach(item -> {
+								JSONObject aggregationsGroupItem = new JSONObject();
+								aggregationsGroupItem.put("key", item.getKey());
+								aggregationsGroupItem.put("total", item.getDocCount());
+								aggregationsGroupList.add(aggregationsGroupItem);
+							});
+						}
 						groupData.put(groupFields[i], aggregationsGroupList);
 					}
 				}
