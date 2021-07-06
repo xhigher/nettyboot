@@ -16,6 +16,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -664,6 +665,42 @@ public abstract class XModel {
         } finally {
             this.closeConnection(null, pstmt, conn);
         }
+    }
+
+    public long insertReturnGeneratedKey() {
+        if (mValues.size() == 0) {
+            return 0;
+        }
+        Connection conn = this.getConnection();
+        if (conn == null) {
+            return 0;
+        }
+        PreparedStatement pstmt = null;
+        prepareStatement(SQLType.INSERT);
+        try {
+            pstmt = conn.prepareStatement(mStatementSQL, Statement.RETURN_GENERATED_KEYS);
+            for (int i = 0, n = mStatementParams.size(); i < n; i++) {
+                pstmt.setObject(i + 1, mStatementParams.get(i));
+            }
+            int num = pstmt.executeUpdate();
+            if(num > 0) {
+                ResultSet rs = pstmt.getGeneratedKeys();
+                JSONObject json = this.getJSONObject(rs);
+                System.out.println(json);
+
+                return json.getLongValue("GENERATED_KEY");
+            }
+            return 0;
+        } catch (SQLException e) {
+            this.mException = e;
+            logger.error("XModel.insert.SQLException: " + readOriginalSql(pstmt), e);
+            throw new RuntimeException(e);
+        } catch (Exception e){
+
+        }finally {
+            this.closeConnection(null, pstmt, conn);
+        }
+        return 0;
     }
 
     public long lastInsertId() {
