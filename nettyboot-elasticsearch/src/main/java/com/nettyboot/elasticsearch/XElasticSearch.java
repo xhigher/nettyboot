@@ -1,13 +1,21 @@
 package com.nettyboot.elasticsearch;
 
 import com.alibaba.fastjson.JSON;
+import org.apache.http.HeaderElement;
+import org.apache.http.HeaderElementIterator;
 import org.apache.http.HttpHost;
+import org.apache.http.HttpResponse;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
+import org.apache.http.conn.ConnectionKeepAliveStrategy;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
 import org.apache.http.impl.nio.reactor.IOReactorConfig;
+import org.apache.http.message.BasicHeaderElementIterator;
+import org.apache.http.protocol.HTTP;
+import org.apache.http.protocol.HttpContext;
+import org.apache.http.util.Args;
 import org.elasticsearch.ElasticsearchStatusException;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.get.GetRequest;
@@ -26,6 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
 public class XElasticSearch {
 	
@@ -58,6 +67,24 @@ public class XElasticSearch {
 					public HttpAsyncClientBuilder customizeHttpClient(HttpAsyncClientBuilder httpClientBuilder) {
 						httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
 						httpClientBuilder.setDefaultIOReactorConfig(IOReactorConfig.custom().setIoThreadCount(10).build());
+						httpClientBuilder.setKeepAliveStrategy((response, context) -> {
+							Args.notNull(response, "HTTP response");
+							final HeaderElementIterator it = new BasicHeaderElementIterator(
+									response.headerIterator(HTTP.CONN_KEEP_ALIVE));
+							while (it.hasNext()) {
+								final HeaderElement he = it.nextElement();
+								final String param = he.getName();
+								final String value = he.getValue();
+								if (value != null && param.equalsIgnoreCase("timeout")) {
+									try {
+										return Long.parseLong(value) * 1000;
+									} catch (final NumberFormatException ignore) {
+									}
+								}
+							}
+							// 三分钟
+							return TimeUnit.MINUTES.toMillis(3);
+						});
 						return httpClientBuilder;
 					}
 				});
