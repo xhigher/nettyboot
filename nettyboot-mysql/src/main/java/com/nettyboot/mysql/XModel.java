@@ -1390,7 +1390,7 @@ public abstract class XModel {
     }
 
     public XModel addWhere(String key, Object value, WhereType type) {
-        if (type == WhereType.IN) {
+        if (type == WhereType.IN || type == WhereType.NIN) {
             if (value instanceof JSONArray || value instanceof Object[]) {
                 mWheres.add(new ClauseWhere(key.trim(), value, type));
             } else {
@@ -1519,7 +1519,7 @@ public abstract class XModel {
 
     public enum SQLType {INSERT, INSERT_BATCH, INSERT_UPDATE, INSERT_NOT_EXISTS, INSERT_UPDATE_BATCH, REPLACE, SELECT, COUNT, UPDATE, DELETE}
 
-    public enum WhereType {EQ, NEQ, IN, GT, LT, GET, LET, LIKE, LLIKE, RLIKE}
+    public enum WhereType {EQ, NEQ, IN, NIN, GT, LT, GET, LET, LIKE, LLIKE, RLIKE}
 
     public class ClauseWhere {
 
@@ -1591,6 +1591,8 @@ public abstract class XModel {
                         return " (`" + this.key + "`<>?) ";
                     case IN:
                         return " (`" + this.key + "` IN (" + getInPattern() + ")) ";
+                    case NIN:
+                        return " (`" + this.key + "` NOT IN (" + getInPattern() + ")) ";
                     case LT:
                         return " (`" + this.key + "`<?) ";
                     case GT:
