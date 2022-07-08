@@ -19,8 +19,8 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.compiler.mainClass></maven.compiler.mainClass>
 
-        <fastjson.version>1.2.71</fastjson.version>
-        <netty.version>4.1.42.Final</netty.version>
+        <fastjson.version>1.2.83</fastjson.version>
+        <netty.version>4.1.77.Final</netty.version>
         <okhttp3.version>4.7.2</okhttp3.version>
         <jedis.version>3.3.0</jedis.version>
         <mysql.version>6.0.5</mysql.version>
@@ -101,6 +101,7 @@
         <module>nettyboot-flink-server</module>
         <module>nettyboot-flink-kafka</module>
         <module>nettyboot-tomcat</module>
+        <module>nettyboot-websocket</module>
     </modules>
 
     <dependencies>
